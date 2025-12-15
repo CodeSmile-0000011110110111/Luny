@@ -12,7 +12,7 @@ namespace Luny
     {
         private static EngineLifecycleDispatcher _instance;
 
-        private readonly LifecycleObserverRegistry _registry;
+        private readonly EngineLifecycleDispatcher.LifecycleObserverRegistry _registry;
 
         /// <summary>
         /// Gets the singleton instance, creating it on first access.
@@ -33,7 +33,7 @@ namespace Luny
         private EngineLifecycleDispatcher()
         {
             // CHANGE Step 5: Remove timing/log once verified—kept per RFC requirement to log discovery time.
-            _registry = new LifecycleObserverRegistry();
+            _registry = new EngineLifecycleDispatcher.LifecycleObserverRegistry();
         }
 
         // CHANGE Step 5: Verify delegation; remove CHANGE tags after Step 10 verification.
@@ -59,20 +59,6 @@ namespace Luny
             {
                 try { observer.OnShutdown(); } catch { /* keep dispatch resilient */ }
             }
-        }
-
-        // CHANGE Step 5: Add ThrowDuplicateAdapterException helper method here.
-        public static void ThrowDuplicateAdapterException(string adapterTypeName, string existingObjectName, long existingInstanceId, string duplicateObjectName, long duplicateInstanceId)
-        {
-            throw new InvalidOperationException(
-                $"Duplicate {adapterTypeName} singleton detected! " +
-                $"Existing: Name='{existingObjectName}' InstanceID={existingInstanceId}, " +
-                $"Duplicate: Name='{duplicateObjectName}' InstanceID={duplicateInstanceId}");
-        }
-
-        public static void ThrowAdapterPrematurelyRemovedException(String godotLifecycleAdapterName)
-        {
-            throw new InvalidOperationException($"{godotLifecycleAdapterName} unexpectedly removed from SceneTree! It must remain in scene at all times.");
         }
 
         // CHANGE Step 6: Add EnableObserver/DisableObserver/IsObserverEnabled wrappers here.
