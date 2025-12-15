@@ -1,0 +1,13 @@
+namespace Luny
+{
+    /// <summary>
+    /// Dispatcher interface - receives callbacks from engine adapters.
+    /// </summary>
+    public interface IEngineLifecycleDispatcher
+    {
+        // Dispatcher interface - receives callbacks from engine adapters
+        void OnUpdate(double deltaTime);
+        void OnFixedStep(double fixedDeltaTime);
+        void OnShutdown();
+    }
+}
