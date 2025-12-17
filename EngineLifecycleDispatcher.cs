@@ -39,7 +39,7 @@ namespace Luny
 				catch (Exception e)
 				{
 					/* keep dispatch resilient */
-					LunyLog.Exception(e);
+					LunyLogger.LogException(e);
 				}
 			}
 		}
@@ -55,7 +55,7 @@ namespace Luny
 				catch (Exception e)
 				{
 					/* keep dispatch resilient */
-					LunyLog.Exception(e);
+					LunyLogger.LogException(e);
 				}
 			}
 		}
@@ -71,7 +71,7 @@ namespace Luny
 				catch (Exception e)
 				{
 					/* keep dispatch resilient */
-					LunyLog.Exception(e);
+					LunyLogger.LogException(e);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ namespace Luny
 				catch (Exception e)
 				{
 					/* keep dispatch resilient */
-					LunyLog.Exception(e);
+					LunyLogger.LogException(e);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ namespace Luny
 				catch (Exception e)
 				{
 					/* keep dispatch resilient */
-					LunyLog.Exception(e);
+					LunyLogger.LogException(e);
 				}
 			}
 		}
@@ -126,7 +126,7 @@ namespace Luny
 
 			private void DiscoverAndInstantiateObservers()
 			{
-				LunyLog.Info($"[LifecycleObserverRegistry] Locating {nameof(IEngineLifecycle)} observers ...");
+				LunyLogger.LogInfo($"[LifecycleObserverRegistry] Locating {nameof(IEngineLifecycle)} observers ...");
 				var sw = Stopwatch.StartNew();
 
 				var observerTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -142,7 +142,7 @@ namespace Luny
 
 				foreach (var type in observerTypes)
 				{
-					LunyLog.Info($"[LifecycleObserverRegistry] Creating observer instance: {type.Name} (Assembly: {type.Assembly.GetName().Name})");
+					LunyLogger.LogInfo($"[LifecycleObserverRegistry] Creating observer instance: {type.Name} (Assembly: {type.Assembly.GetName().Name})");
 					var observer = (IEngineLifecycle)Activator.CreateInstance(type);
 					_registeredObservers[type] = observer;
 					_enabledObservers.Add(observer); // enabled by default
@@ -151,7 +151,7 @@ namespace Luny
 				sw.Stop();
 
 				var ms = (Int32)Math.Round(sw.Elapsed.TotalMilliseconds, MidpointRounding.AwayFromZero);
-				LunyLog.Info($"[LifecycleObserverRegistry] Registered {_enabledObservers.Count} {nameof(IEngineLifecycle)} observers in {ms} ms.");
+				LunyLogger.LogInfo($"[LifecycleObserverRegistry] Registered {_enabledObservers.Count} {nameof(IEngineLifecycle)} observers in {ms} ms.");
 			}
 
 			public void EnableObserver<T>() where T : IEngineLifecycle
