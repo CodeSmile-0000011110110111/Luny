@@ -8,9 +8,9 @@ namespace Luny
     public interface IEngineLifecycleDispatcher
     {
         // Dispatcher interface - receives callbacks from engine adapters
+        void OnFixedStep(double fixedDeltaTime);
         void OnUpdate(double deltaTime);
         void OnLateUpdate(Double delta);
-        void OnFixedStep(double fixedDeltaTime);
         void OnShutdown();
     }
 }

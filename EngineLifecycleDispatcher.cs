@@ -12,7 +12,7 @@ namespace Luny
 	{
 		private static EngineLifecycleDispatcher _instance;
 
-		private readonly LifecycleObserverRegistry _registry;
+		private LifecycleObserverRegistry _registry;
 
 		/// <summary>
 		/// Gets the singleton instance, creating it on first access.
@@ -90,6 +90,10 @@ namespace Luny
 					LunyLogger.LogException(e);
 				}
 			}
+
+			// invalidate references
+			_registry = null;
+			_instance = null;
 		}
 
 		private void OnStartup()
@@ -114,7 +118,6 @@ namespace Luny
 
 		public Boolean IsObserverEnabled<T>() where T : IEngineLifecycle => _registry.IsObserverEnabled<T>();
 
-		// CHANGE Step 3: Nested registry with discovery + timing per RFC.
 		private sealed class LifecycleObserverRegistry
 		{
 			private readonly Dictionary<Type, IEngineLifecycle> _registeredObservers = new();

@@ -9,9 +9,9 @@ namespace Luny
 	{
 		// Lifecycle observer interface - receives callbacks from dispatcher
 		void OnStartup();
+		void OnFixedStep(Double fixedDeltaTime);
 		void OnUpdate(Double deltaTime);
 		void OnLateUpdate(Double deltaTime);
-		void OnFixedStep(Double fixedDeltaTime);
 		void OnShutdown();
 	}
 }
