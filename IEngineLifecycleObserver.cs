@@ -3,11 +3,11 @@ using System;
 namespace Luny
 {
 	/// <summary>
-	/// Lifecycle observer interface - receives callbacks from dispatcher.
+	/// Lifecycle observer interface - receives callbacks from LunyEngine.
 	/// </summary>
-	public interface IEngineLifecycle
+	public interface IEngineLifecycleObserver
 	{
-		// Lifecycle observer interface - receives callbacks from dispatcher
+		// Lifecycle observer interface - receives callbacks from LunyEngine
 		void OnStartup();
 		void OnFixedStep(Double fixedDeltaTime);
 		void OnUpdate(Double deltaTime);

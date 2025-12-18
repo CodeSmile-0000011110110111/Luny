@@ -10,8 +10,11 @@ namespace Luny
             $"Existing: Name='{existingObjectName}' InstanceID={existingInstanceId}, " +
             $"Duplicate: Name='{duplicateObjectName}' InstanceID={duplicateInstanceId}");
 
-        public static void LifecycleDispatcherSingletonDuplicationException(String adapterTypeName) =>
-            throw new InvalidOperationException($"Duplicate {adapterTypeName} singleton detected!");
+        public static void SingletonDuplicationException(String typeName) =>
+            throw new InvalidOperationException($"Duplicate {typeName} singleton detected!");
+
+        public static void ServiceNotFoundException(String serviceName) =>
+            throw new InvalidOperationException($"Service {serviceName} not found in registry.");
 
         public static void LifecycleAdapterPrematurelyRemovedException(String godotLifecycleAdapterName) =>
             throw new InvalidOperationException(
