@@ -8,12 +8,13 @@ namespace Luny
 	/// </summary>
 	public static class LunyLogger
 	{
-		private static ILunyLogger _logger = new ConsoleLogger();
+		private static readonly ILunyLogger _consoleLogger = new ConsoleLogger();
+		private static ILunyLogger _logger = _consoleLogger;
 
 		/// <summary>
 		/// Installs an engine-specific logger. Pass <c>null</c> to revert to the default console logger.
 		/// </summary>
-		public static void SetLogger(ILunyLogger logger) => _logger = logger ?? new ConsoleLogger();
+		public static void SetLogger(ILunyLogger logger) => _logger = logger ?? _consoleLogger;
 
 		public static void LogInfo(String message, Object context = null) => _logger.LogInfo(FormatWithContext(message, context));
 		public static void LogWarning(String message, Object context = null) => _logger.LogWarning(FormatWithContext(message, context));
