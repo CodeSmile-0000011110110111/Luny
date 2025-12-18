@@ -14,7 +14,7 @@ namespace Luny
 		/// <summary>
 		/// Installs an engine-specific logger. Pass <c>null</c> to revert to the default console logger.
 		/// </summary>
-		public static void SetLogger(ILunyLogger logger) => _logger = logger ?? _consoleLogger;
+		public static ILunyLogger Logger { get => _logger; set => _logger = value ?? _consoleLogger; }
 
 		public static void LogInfo(String message, Object context = null) => _logger.LogInfo(FormatWithContext(message, context));
 		public static void LogWarning(String message, Object context = null) => _logger.LogWarning(FormatWithContext(message, context));
