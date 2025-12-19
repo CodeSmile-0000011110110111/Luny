@@ -34,8 +34,8 @@ namespace Luny
 		{
 			var sw = Stopwatch.StartNew();
 
-			var observerTypes = AppDomain.CurrentDomain.GetAssemblies()
-				.SelectMany(a =>
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			var observerTypes = assemblies.SelectMany(a =>
 				{
 					try { return a.GetTypes(); }
 					catch { return Array.Empty<Type>(); }

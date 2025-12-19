@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Luny.Proxies;
 
 namespace Luny.Providers
 {
@@ -11,5 +13,15 @@ namespace Luny.Providers
 		/// Gets the name of the currently active scene.
 		/// </summary>
 		String CurrentSceneName { get; }
+
+		/// <summary>
+		/// Gets all objects in the current scene.
+		/// </summary>
+		IReadOnlyList<LunyObject> GetAllObjects();
+
+		/// <summary>
+		/// Finds an object by name in the current scene.
+		/// </summary>
+		LunyObject FindObjectByName(String name);
 	}
 }

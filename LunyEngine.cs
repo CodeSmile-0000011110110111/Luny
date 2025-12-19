@@ -26,7 +26,22 @@ namespace Luny
 			_serviceRegistry = new EngineServiceRegistry<IEngineServiceProvider>();
 			var sceneProvider = _serviceRegistry.Get<ISceneServiceProvider>();
 			_observerRegistry = new EngineLifecycleObserverRegistry(sceneProvider);
-			OnStartup();
+		}
+
+		public void OnStartup()
+		{
+			foreach (var observer in _observerRegistry.EnabledObservers)
+			{
+				try
+				{
+					observer.OnStartup();
+				}
+				catch (Exception e)
+				{
+					/* keep dispatch resilient */
+					LunyLogger.LogException(e);
+				}
+			}
 		}
 
 		public void OnUpdate(Double deltaTime)
@@ -59,6 +74,8 @@ namespace Luny
 					LunyLogger.LogException(e);
 				}
 			}
+
+			// TODO: run structural changes here, ie "OnCommitUpdate"
 		}
 
 		public void OnFixedStep(Double fixedDeltaTime)
@@ -105,22 +122,6 @@ namespace Luny
 		public TService GetService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Get<TService>();
 
 		public Boolean HasService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Has<TService>();
-
-		private void OnStartup()
-		{
-			foreach (var observer in _observerRegistry.EnabledObservers)
-			{
-				try
-				{
-					observer.OnStartup();
-				}
-				catch (Exception e)
-				{
-					/* keep dispatch resilient */
-					LunyLogger.LogException(e);
-				}
-			}
-		}
 
 		public T GetObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.GetObserver<T>();
 	}

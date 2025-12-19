@@ -19,8 +19,8 @@ namespace Luny
         {
             var sw = Stopwatch.StartNew();
 
-            var serviceTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a =>
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var serviceTypes = assemblies.SelectMany(a =>
                 {
                     try { return a.GetTypes(); }
                     catch { return Array.Empty<Type>(); }

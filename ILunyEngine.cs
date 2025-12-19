@@ -8,6 +8,7 @@ namespace Luny
 	public interface ILunyEngine
 	{
 		// Lifecycle dispatch methods - receives callbacks from engine adapters
+		void OnStartup();
 		void OnFixedStep(Double fixedDeltaTime);
 		void OnUpdate(Double deltaTime);
 		void OnLateUpdate(Double deltaTime);
