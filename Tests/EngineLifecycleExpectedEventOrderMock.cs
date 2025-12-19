@@ -75,13 +75,13 @@ namespace Luny.Tests
 
         public void PostShutdownVerification()
         {
-	        LunyAssert.IsTrue(_didRunStartup, $"{nameof(OnShutdown)} ran before {nameof(OnStartup)}");
-	        LunyAssert.IsTrue(_didRunShutdown, $"{nameof(OnShutdown)} did not run");
-	        LunyAssert.IsTrue(_fixedStepRunCount > 0, $"{nameof(OnFixedStep)} did not run");
-	        LunyAssert.IsTrue(_updateRunCount > 0, $"{nameof(OnUpdate)} did not run");
-	        LunyAssert.IsTrue(_lateUpdateRunCount > 0, $"{nameof(OnLateUpdate)} did not run");
-	        LunyAssert.AreEqual(_updateRunCount, _lateUpdateRunCount,
-		        $"{nameof(OnLateUpdate)} and {nameof(OnUpdate)} did not run same number of times");
+            LunyAssert.IsTrue(_didRunStartup, $"{nameof(OnShutdown)} ran before {nameof(OnStartup)}");
+            LunyAssert.IsTrue(_didRunShutdown, $"{nameof(OnShutdown)} did not run");
+            LunyAssert.IsTrue(_fixedStepRunCount > 0, $"{nameof(OnFixedStep)} did not run");
+            LunyAssert.IsTrue(_updateRunCount > 0, $"{nameof(OnUpdate)} did not run");
+            LunyAssert.IsTrue(_lateUpdateRunCount > 0, $"{nameof(OnLateUpdate)} did not run");
+            LunyAssert.AreEqual(_updateRunCount, _lateUpdateRunCount,
+                $"{nameof(OnLateUpdate)} and {nameof(OnUpdate)} did not run same number of times");
         }
     }
 }
