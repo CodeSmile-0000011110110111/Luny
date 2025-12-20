@@ -1,4 +1,5 @@
 using Luny.Providers;
+using Luny.Diagnostics;
 using System;
 
 namespace Luny
@@ -12,6 +13,13 @@ namespace Luny
 
         private EngineServiceRegistry<IEngineServiceProvider> _serviceRegistry;
         private EngineLifecycleObserverRegistry _observerRegistry;
+        private EngineProfiler _profiler;
+
+        /// <summary>
+        /// Gets the engine profiler for performance monitoring.
+        /// Profiling methods are no-ops in release builds unless LUNY_PROFILE is defined.
+        /// </summary>
+        public EngineProfiler Profiler => _profiler;
 
         /// <summary>
         /// Gets the singleton instance, creating it on first access.
@@ -26,20 +34,27 @@ namespace Luny
             _serviceRegistry = new EngineServiceRegistry<IEngineServiceProvider>();
             var sceneProvider = _serviceRegistry.Get<ISceneServiceProvider>();
             _observerRegistry = new EngineLifecycleObserverRegistry(sceneProvider);
+            _profiler = new EngineProfiler();
         }
 
         public void OnStartup()
         {
             foreach (var observer in _observerRegistry.EnabledObservers)
             {
+                _profiler.BeginObserver(observer);
                 try
                 {
                     observer.OnStartup();
                 }
                 catch (Exception e)
                 {
+                    _profiler.RecordError(observer, e);
                     /* keep dispatch resilient */
                     LunyLogger.LogException(e);
+                }
+                finally
+                {
+                    _profiler.EndObserver(observer);
                 }
             }
         }
@@ -48,14 +63,20 @@ namespace Luny
         {
             foreach (var observer in _observerRegistry.EnabledObservers)
             {
+                _profiler.BeginObserver(observer);
                 try
                 {
                     observer.OnUpdate(deltaTime);
                 }
                 catch (Exception e)
                 {
+                    _profiler.RecordError(observer, e);
                     /* keep dispatch resilient */
                     LunyLogger.LogException(e);
+                }
+                finally
+                {
+                    _profiler.EndObserver(observer);
                 }
             }
         }
@@ -64,14 +85,20 @@ namespace Luny
         {
             foreach (var observer in _observerRegistry.EnabledObservers)
             {
+                _profiler.BeginObserver(observer);
                 try
                 {
                     observer.OnLateUpdate(deltaTime);
                 }
                 catch (Exception e)
                 {
+                    _profiler.RecordError(observer, e);
                     /* keep dispatch resilient */
                     LunyLogger.LogException(e);
+                }
+                finally
+                {
+                    _profiler.EndObserver(observer);
                 }
             }
 
@@ -82,14 +109,20 @@ namespace Luny
         {
             foreach (var observer in _observerRegistry.EnabledObservers)
             {
+                _profiler.BeginObserver(observer);
                 try
                 {
                     observer.OnFixedStep(fixedDeltaTime);
                 }
                 catch (Exception e)
                 {
+                    _profiler.RecordError(observer, e);
                     /* keep dispatch resilient */
                     LunyLogger.LogException(e);
+                }
+                finally
+                {
+                    _profiler.EndObserver(observer);
                 }
             }
         }
@@ -98,20 +131,27 @@ namespace Luny
         {
             foreach (var observer in _observerRegistry.EnabledObservers)
             {
+                _profiler.BeginObserver(observer);
                 try
                 {
                     observer.OnShutdown();
                 }
                 catch (Exception e)
                 {
+                    _profiler.RecordError(observer, e);
                     /* keep dispatch resilient */
                     LunyLogger.LogException(e);
+                }
+                finally
+                {
+                    _profiler.EndObserver(observer);
                 }
             }
 
             // invalidate references
             _serviceRegistry = null;
             _observerRegistry = null;
+            _profiler = null;
             _instance = null;
         }
 
