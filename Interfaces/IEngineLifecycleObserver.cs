@@ -8,7 +8,7 @@ namespace Luny.Interfaces
 	public interface IEngineLifecycleObserver
 	{
 		// Lifecycle observer interface - receives callbacks from LunyEngine
-		void OnStartup();
+		void OnStartup(ILunyEngine engine);
 		void OnFixedStep(Double fixedDeltaTime);
 		void OnUpdate(Double deltaTime);
 		void OnLateUpdate(Double deltaTime);

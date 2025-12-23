@@ -1,7 +1,6 @@
 using Luny.Diagnostics;
 using Luny.Exceptions;
 using Luny.Interfaces;
-using Luny.Interfaces.Providers;
 using Luny.Registries;
 using System;
 
@@ -10,7 +9,7 @@ namespace Luny
 	/// <summary>
 	/// Singleton engine that discovers and manages services and lifecycle observers.
 	/// </summary>
-	public sealed class LunyEngine : ILunyEngine
+	internal sealed partial class LunyEngine : ILunyEngine
 	{
 		private static LunyEngine _instance;
 
@@ -22,16 +21,12 @@ namespace Luny
 		/// Gets the engine profiler for performance monitoring.
 		/// Profiling methods are no-ops in release builds unless LUNY_PROFILE is defined.
 		/// </summary>
-		public EngineProfiler Profiler => _profiler;
+		internal EngineProfiler Profiler => _profiler;
 
 		/// <summary>
 		/// Gets the singleton instance, creating it on first access.
 		/// </summary>
-		public static LunyEngine Instance => _instance ??= new LunyEngine();
-
-		public static IApplicationServiceProvider ApplicationService { get; private set; }
-		public static ISceneServiceProvider SceneService { get; private set; }
-		public static ITimeServiceProvider TimeService { get; private set; }
+		public static ILunyEngine Instance => _instance ??= new LunyEngine();
 
 		private LunyEngine()
 		{
@@ -40,7 +35,7 @@ namespace Luny
 
 			_serviceRegistry = new EngineServiceRegistry<IEngineServiceProvider>();
 			AcquireMandatoryServices();
-			_observerRegistry = new EngineLifecycleObserverRegistry(SceneService);
+			_observerRegistry = new EngineLifecycleObserverRegistry(Scene);
 			_profiler = new EngineProfiler();
 		}
 
@@ -51,7 +46,7 @@ namespace Luny
 				_profiler.BeginObserver(observer);
 				try
 				{
-					observer.OnStartup();
+					observer.OnStartup(this);
 				}
 				catch (Exception e)
 				{
@@ -156,7 +151,6 @@ namespace Luny
 			}
 
 			// invalidate references
-			ClearMandatoryServices();
 			_serviceRegistry = null;
 			_observerRegistry = null;
 			_profiler = null;
@@ -168,19 +162,11 @@ namespace Luny
 
 		public void DisableObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.DisableObserver<T>();
 		public TService GetService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Get<TService>();
-		public Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider => _serviceRegistry.TryGet(out service);
+
+		public Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider =>
+			_serviceRegistry.TryGet(out service);
 
 		public Boolean HasService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Has<TService>();
-
-		private void AcquireMandatoryServices()
-		{
-			ApplicationService = GetService<IApplicationServiceProvider>();
-			SceneService = GetService<ISceneServiceProvider>();
-			TimeService = GetService<ITimeServiceProvider>();
-		}
-
-		private void ClearMandatoryServices() => ApplicationService = null;
-
 
 		public T GetObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.GetObserver<T>();
 	}

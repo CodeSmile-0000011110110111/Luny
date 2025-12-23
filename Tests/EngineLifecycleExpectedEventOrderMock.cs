@@ -23,7 +23,7 @@ namespace Luny.Tests
 
         public EngineLifecycleExpectedEventOrderMock() => LunyLogger.LogInfo($"{nameof(EngineLifecycleExpectedEventOrderMock)} ctor", this);
 
-        public void OnStartup()
+        public void OnStartup(ILunyEngine engine)
         {
             LunyLogger.LogInfo(nameof(OnStartup), this);
             LunyAssert.IsFalse(_didRunStartup, $"{nameof(OnStartup)} called more than once");
@@ -62,7 +62,7 @@ namespace Luny.Tests
             {
                 // Force shutdown
                 LunyLogger.LogInfo("Lifecycle mock calls Quit to end lifecycle testing ...");
-                LunyEngine.ApplicationService.Quit();
+                LunyEngine.Instance.Application.Quit();
             }
         }
 

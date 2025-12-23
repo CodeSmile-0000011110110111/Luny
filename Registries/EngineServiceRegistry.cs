@@ -73,7 +73,7 @@ namespace Luny.Registries
 				service = (TService)registeredService;
 				return true;
 			}
-			
+
 			service = null;
 			return false;
 		}

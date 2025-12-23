@@ -1,4 +1,3 @@
-using Luny.Interfaces.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -96,14 +95,13 @@ namespace Luny.Diagnostics
 			if (!EnableInternalLogging)
 				return;
 
+			var timeService = LunyEngine.Instance.Time;
+
 			_internalLog ??= new List<LogEntry>();
-
-			var timeService = LunyEngine.TimeService;
-
 			_internalLog.Add(new LogEntry
 			{
-				FrameCount = timeService?.FrameCount ?? -1,
-				ElapsedSeconds = timeService?.ElapsedSeconds ?? -1.0,
+				FrameCount = timeService.FrameCount,
+				ElapsedSeconds = timeService.ElapsedSeconds,
 				Level = level,
 				Message = message,
 				Context = context switch

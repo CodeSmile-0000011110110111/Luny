@@ -1,3 +1,4 @@
+using Luny.Interfaces.Providers;
 using System;
 
 namespace Luny.Interfaces
@@ -7,6 +8,12 @@ namespace Luny.Interfaces
 	/// </summary>
 	public interface ILunyEngine
 	{
+		// Mandatory services
+		IApplicationServiceProvider Application { get; }
+		IDebugServiceProvider Debug { get; }
+		ISceneServiceProvider Scene { get; }
+		ITimeServiceProvider Time { get; }
+
 		// Lifecycle dispatch methods - receives callbacks from engine adapters
 		void OnStartup();
 		void OnFixedStep(Double fixedDeltaTime);
