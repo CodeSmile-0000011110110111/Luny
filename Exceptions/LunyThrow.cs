@@ -1,3 +1,4 @@
+using Luny.Interfaces;
 using System;
 
 namespace Luny.Exceptions
@@ -25,11 +26,11 @@ namespace Luny.Exceptions
 
 		// [StackTraceHidden] not supported by Unity 6
 		public static void ServiceMustImplementSpecificInterfaceException(String serviceName) => throw new LunyServiceException(
-			$"Service {serviceName} must implement a specific interface derived from IEngineServiceProvider, not IEngineServiceProvider directly.");
+			$"Service {serviceName} must implement a specific interface derived from {nameof(IEngineServiceProvider)}, not {nameof(IEngineServiceProvider)} directly.");
 
 		// [StackTraceHidden] not supported by Unity 6
 		public static void ServiceImplementsMultipleInterfacesException(String serviceName, String interfacesFound) =>
 			throw new LunyServiceException(
-				$"Service {serviceName} implements multiple IEngineServiceProvider-derived interfaces: {interfacesFound}. Only one is allowed.");
+				$"Service {serviceName} implements multiple {nameof(IEngineServiceProvider)}-derived interfaces: {interfacesFound}. Only one is allowed per type.");
 	}
 }

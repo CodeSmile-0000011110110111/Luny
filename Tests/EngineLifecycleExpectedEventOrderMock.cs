@@ -1,4 +1,5 @@
 using Luny.Attributes;
+using Luny.Diagnostics;
 using Luny.Interfaces;
 using Luny.Interfaces.Providers;
 using Luny.Proxies;
@@ -61,8 +62,7 @@ namespace Luny.Tests
             {
                 // Force shutdown
                 LunyLogger.LogInfo("Lifecycle mock calls Quit to end lifecycle testing ...");
-                var applicationProvider = LunyEngine.Instance.GetService<IApplicationServiceProvider>();
-                applicationProvider.Quit();
+                LunyEngine.ApplicationService.Quit();
             }
         }
 

@@ -1,6 +1,6 @@
+using Luny.Diagnostics;
 using Luny.Exceptions;
 using Luny.Interfaces;
-using Luny.Proxies;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,29 +24,19 @@ namespace Luny.Registries
 				.ToArray();
 
 			// Must implement exactly one specific service interface
-			if (serviceInterfaces.Length == 0)
-				LunyThrow.ServiceMustImplementSpecificInterfaceException(implementationType.Name);
-
-			if (serviceInterfaces.Length > 1)
+			if (serviceInterfaces.Length != 1)
 			{
-				// Check if any interface directly inherits from IEngineServiceProvider
-				var directInterfaces = serviceInterfaces
-					.Where(i => i.GetInterfaces().Contains(typeof(T)))
-					.ToArray();
+				if (serviceInterfaces.Length == 0)
+					LunyThrow.ServiceMustImplementSpecificInterfaceException(implementationType.Name);
 
-				if (directInterfaces.Length != 1)
-				{
-					var interfaceNames = String.Join(", ", serviceInterfaces.Select(i => i.Name));
-					LunyThrow.ServiceImplementsMultipleInterfacesException(implementationType.Name, interfaceNames);
-				}
-
-				return directInterfaces[0];
+				LunyThrow.ServiceImplementsMultipleInterfacesException(implementationType.Name,
+					String.Join(", ", serviceInterfaces.Select(i => i.Name)));
 			}
 
 			return serviceInterfaces[0];
 		}
 
-		public EngineServiceRegistry() => DiscoverAndInstantiateServices();
+		internal EngineServiceRegistry() => DiscoverAndInstantiateServices();
 
 		private void DiscoverAndInstantiateServices()
 		{
@@ -71,15 +61,17 @@ namespace Luny.Registries
 			LunyLogger.LogInfo($"Registered {_registeredServices.Count} {typeof(T).Name} services in {ms} ms.", this);
 		}
 
-		public TService Get<TService>() where TService : class, T, IEngineServiceProvider
+		internal TService Get<TService>(bool throwIfNotFound = false) where TService : class, T, IEngineServiceProvider
 		{
 			if (_registeredServices.TryGetValue(typeof(TService), out var service))
-				return service as TService;
+				return (TService)service;
 
-			LunyThrow.ServiceNotFoundException(typeof(TService).FullName);
+			if (throwIfNotFound)
+				LunyThrow.ServiceNotFoundException(typeof(TService).FullName);
+
 			return null;
 		}
 
-		public Boolean Has<TService>() where TService : class, T, IEngineServiceProvider => _registeredServices.ContainsKey(typeof(TService));
+		internal Boolean Has<TService>() where TService : class, T, IEngineServiceProvider => _registeredServices.ContainsKey(typeof(TService));
 	}
 }

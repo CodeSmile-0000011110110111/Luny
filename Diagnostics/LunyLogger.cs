@@ -1,12 +1,18 @@
-using Luny.Diagnostics;
-using Luny.Interfaces;
 using Luny.Interfaces.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Luny.Proxies
+namespace Luny.Diagnostics
 {
+	public interface ILunyLogger
+	{
+		void LogInfo(String message);
+		void LogWarning(String message);
+		void LogError(String message);
+		void LogException(Exception exception);
+	}
+
 	/// <summary>
 	/// Engine-agnostic logger entry point. Delegates to an installable engine-specific logger.
 	/// Default fallback logs to console until an engine replaces it.
@@ -92,7 +98,7 @@ namespace Luny.Proxies
 
 			_internalLog ??= new List<LogEntry>();
 
-			var timeService = LunyEngine.Instance?.GetService<ITimeServiceProvider>();
+			var timeService = LunyEngine.TimeService;
 
 			_internalLog.Add(new LogEntry
 			{
