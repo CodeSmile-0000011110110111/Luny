@@ -168,7 +168,7 @@ namespace Luny
 
 		public void DisableObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.DisableObserver<T>();
 		public TService GetService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Get<TService>();
-		public TService GetServiceThrows<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Get<TService>(true);
+		public Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider => _serviceRegistry.TryGet(out service);
 
 		public Boolean HasService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Has<TService>();
 

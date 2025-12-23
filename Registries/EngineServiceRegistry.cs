@@ -61,15 +61,21 @@ namespace Luny.Registries
 			LunyLogger.LogInfo($"Registered {_registeredServices.Count} {typeof(T).Name} services in {ms} ms.", this);
 		}
 
-		internal TService Get<TService>(bool throwIfNotFound = false) where TService : class, T, IEngineServiceProvider
+		internal TService Get<TService>() where TService : class, T, IEngineServiceProvider =>
+			_registeredServices.TryGetValue(typeof(TService), out var service)
+				? (TService)service
+				: throw new LunyServiceException($"Service {typeof(TService).FullName} not found in registry.");
+
+		internal Boolean TryGet<TService>(out TService service) where TService : class, T, IEngineServiceProvider
 		{
-			if (_registeredServices.TryGetValue(typeof(TService), out var service))
-				return (TService)service;
-
-			if (throwIfNotFound)
-				LunyThrow.ServiceNotFoundException(typeof(TService).FullName);
-
-			return null;
+			if (_registeredServices.TryGetValue(typeof(TService), out var registeredService))
+			{
+				service = (TService)registeredService;
+				return true;
+			}
+			
+			service = null;
+			return false;
 		}
 
 		internal Boolean Has<TService>() where TService : class, T, IEngineServiceProvider => _registeredServices.ContainsKey(typeof(TService));

@@ -21,6 +21,7 @@ namespace Luny.Interfaces
 
 		// Service access
 		TService GetService<TService>() where TService : class, IEngineServiceProvider;
+		Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider;
 		Boolean HasService<TService>() where TService : class, IEngineServiceProvider;
 	}
 }

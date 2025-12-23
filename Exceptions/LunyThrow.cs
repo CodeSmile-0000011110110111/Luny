@@ -21,10 +21,6 @@ namespace Luny.Exceptions
 			$"{adapterName} unexpectedly removed from SceneTree! It must remain in scene at all times.");
 
 		// [StackTraceHidden] not supported by Unity 6
-		public static void ServiceNotFoundException(String serviceName) =>
-			throw new LunyServiceException($"Service {serviceName} not found in registry.");
-
-		// [StackTraceHidden] not supported by Unity 6
 		public static void ServiceMustImplementSpecificInterfaceException(String serviceName) => throw new LunyServiceException(
 			$"Service {serviceName} must implement a specific interface derived from {nameof(IEngineServiceProvider)}, not {nameof(IEngineServiceProvider)} directly.");
 
