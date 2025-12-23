@@ -1,9 +1,8 @@
-using Luny.Interfaces;
 using Luny.Proxies;
 using System;
 using System.Collections.Generic;
 
-namespace Luny.Providers
+namespace Luny.Interfaces.Providers
 {
 	/// <summary>
 	/// Engine-agnostic scene information provider.

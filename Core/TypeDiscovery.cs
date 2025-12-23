@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Luny.Registries
+namespace Luny
 {
 	/// <summary>
 	/// Utilities for discovering types via reflection across all loaded assemblies.

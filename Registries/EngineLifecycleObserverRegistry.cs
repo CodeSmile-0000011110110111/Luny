@@ -1,6 +1,6 @@
 using Luny.Attributes;
 using Luny.Interfaces;
-using Luny.Providers;
+using Luny.Interfaces.Providers;
 using Luny.Proxies;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,6 @@
-using Luny.Interfaces;
 using System;
 
-namespace Luny.Providers
+namespace Luny.Interfaces.Providers
 {
 	/// <summary>
 	/// Engine-agnostic application control provider.

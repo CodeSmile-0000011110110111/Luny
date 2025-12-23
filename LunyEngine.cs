@@ -1,7 +1,7 @@
-using Luny.Providers;
 using Luny.Diagnostics;
 using Luny.Exceptions;
 using Luny.Interfaces;
+using Luny.Interfaces.Providers;
 using Luny.Proxies;
 using Luny.Registries;
 using System;

@@ -23,9 +23,7 @@ namespace Luny.Diagnostics
 			set => _rollingAverageWindow = Math.Max(1, value); // Clamp to minimum 1
 		}
 
-		[Conditional("DEBUG")]
-		[Conditional("LUNY_DEBUG")]
-		[Conditional("LUNY_PROFILE")]
+		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
 		public void BeginObserver(IEngineLifecycleObserver observer)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
@@ -38,9 +36,7 @@ namespace Luny.Diagnostics
 #endif
 		}
 
-		[Conditional("DEBUG")]
-		[Conditional("LUNY_DEBUG")]
-		[Conditional("LUNY_PROFILE")]
+		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
 		public void EndObserver(IEngineLifecycleObserver observer)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
@@ -91,9 +87,7 @@ namespace Luny.Diagnostics
 			}
 		}
 
-		[Conditional("DEBUG")]
-		[Conditional("LUNY_DEBUG")]
-		[Conditional("LUNY_PROFILE")]
+		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
 		public void RecordError(IEngineLifecycleObserver observer, Exception ex)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
@@ -120,9 +114,7 @@ namespace Luny.Diagnostics
 #endif
 		}
 
-		[Conditional("DEBUG")]
-		[Conditional("LUNY_DEBUG")]
-		[Conditional("LUNY_PROFILE")]
+		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
 		public void Reset()
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE

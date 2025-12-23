@@ -7,8 +7,7 @@ namespace Luny.Tests
 	/// </summary>
 	public sealed class LunyTestContractViolationException : Exception
 	{
-		public LunyTestContractViolationException(String message) : base(message)
-		{
-		}
+		public LunyTestContractViolationException(String message)
+			: base(message) {}
 	}
 }

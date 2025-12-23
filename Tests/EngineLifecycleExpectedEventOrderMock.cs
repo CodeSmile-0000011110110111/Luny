@@ -1,6 +1,6 @@
 using Luny.Attributes;
 using Luny.Interfaces;
-using Luny.Providers;
+using Luny.Interfaces.Providers;
 using Luny.Proxies;
 using System;
 
@@ -11,7 +11,7 @@ namespace Luny.Tests
     /// Only instantiated in smoke test scenes.
     /// </summary>
     [LunyTestable]
-    public sealed class EngineLifecycleExpectedEventOrderMock : IEngineLifecycleObserver
+    internal sealed class EngineLifecycleExpectedEventOrderMock : IEngineLifecycleObserver
     {
         private Boolean _didRunStartup;
         private Int32 _fixedStepRunCount;
