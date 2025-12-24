@@ -9,7 +9,7 @@ namespace Luny
 	/// <summary>
 	/// Singleton engine that discovers and manages services and lifecycle observers.
 	/// </summary>
-	internal sealed partial class LunyEngine : ILunyEngine
+	public sealed partial class LunyEngine : ILunyEngine
 	{
 		private static LunyEngine _instance;
 

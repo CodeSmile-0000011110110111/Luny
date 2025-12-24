@@ -2,7 +2,7 @@ using Luny.Interfaces.Providers;
 
 namespace Luny
 {
-	internal sealed partial class LunyEngine
+	public sealed partial class LunyEngine
 	{
 		public IApplicationServiceProvider Application { get; private set; }
 		public IDebugServiceProvider Debug { get; private set; }
