@@ -1,6 +1,8 @@
-namespace Luny.Interfaces.Providers
+using Luny.Interfaces;
+
+namespace Luny.Services
 {
-	public interface IEditorServiceProvider : IEngineServiceProvider
+	public interface IEditorService : IEngineService
 	{
 		/// <summary>
 		/// Pauses the in-editor player / play mode.

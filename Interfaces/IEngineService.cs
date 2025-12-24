@@ -1,8 +1,8 @@
 namespace Luny.Interfaces
 {
 	/// <summary>
-	/// Marker interface for engine-agnostic service providers.
+	/// Marker interface for engine-agnostic services: APIs such as Debug, Input, etc.
 	/// Implementations are auto-discovered and registered at startup.
 	/// </summary>
-	public interface IEngineServiceProvider {}
+	public interface IEngineService {}
 }

@@ -1,11 +1,12 @@
+using Luny.Interfaces;
 using System;
 
-namespace Luny.Interfaces.Providers
+namespace Luny.Services
 {
 	/// <summary>
-	/// Engine-agnostic application control provider.
+	/// Engine-agnostic application control.
 	/// </summary>
-	public interface IApplicationServiceProvider : IEngineServiceProvider
+	public interface IApplicationService : IEngineService
 	{
 		/// <summary>
 		/// Quits the application with optional exit code.

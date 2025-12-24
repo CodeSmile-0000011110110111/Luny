@@ -1,13 +1,14 @@
+using Luny.Interfaces;
 using Luny.Proxies;
 using System;
 using System.Collections.Generic;
 
-namespace Luny.Interfaces.Providers
+namespace Luny.Services
 {
 	/// <summary>
-	/// Engine-agnostic scene information provider.
+	/// Engine-agnostic scene information service.
 	/// </summary>
-	public interface ISceneServiceProvider : IEngineServiceProvider
+	public interface ISceneService : IEngineService
 	{
 		/// <summary>
 		/// Gets the name of the currently active scene.

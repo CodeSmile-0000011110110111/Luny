@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Luny.Interfaces;
+using System;
 
-namespace Luny.Interfaces.Providers
+namespace Luny.Services
 {
-	public interface IDebugServiceProvider : IEngineServiceProvider
+	public interface IDebugService : IEngineService
 	{
 		void LogInfo(String message);
 		void LogWarning(String message);

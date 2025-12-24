@@ -13,7 +13,7 @@ namespace Luny
 	{
 		private static LunyEngine _instance;
 
-		private EngineServiceRegistry<IEngineServiceProvider> _serviceRegistry;
+		private EngineServiceRegistry<IEngineService> _serviceRegistry;
 		private EngineLifecycleObserverRegistry _observerRegistry;
 		private EngineProfiler _profiler;
 
@@ -33,7 +33,7 @@ namespace Luny
 			if (_instance != null)
 				LunyThrow.SingletonDuplicationException(nameof(LunyEngine));
 
-			_serviceRegistry = new EngineServiceRegistry<IEngineServiceProvider>();
+			_serviceRegistry = new EngineServiceRegistry<IEngineService>();
 			AcquireMandatoryServices();
 
 			_observerRegistry = new EngineLifecycleObserverRegistry(Scene);
@@ -168,12 +168,12 @@ namespace Luny
 		public void EnableObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.EnableObserver<T>();
 
 		public void DisableObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.DisableObserver<T>();
-		public TService GetService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Get<TService>();
+		public TService GetService<TService>() where TService : class, IEngineService => _serviceRegistry.Get<TService>();
 
-		public Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider =>
+		public Boolean TryGetService<TService>(out TService service) where TService : class, IEngineService =>
 			_serviceRegistry.TryGet(out service);
 
-		public Boolean HasService<TService>() where TService : class, IEngineServiceProvider => _serviceRegistry.Has<TService>();
+		public Boolean HasService<TService>() where TService : class, IEngineService => _serviceRegistry.Has<TService>();
 
 		public T GetObserver<T>() where T : IEngineLifecycleObserver => _observerRegistry.GetObserver<T>();
 	}

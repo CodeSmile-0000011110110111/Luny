@@ -1,4 +1,4 @@
-using Luny.Interfaces.Providers;
+using Luny.Services;
 using System;
 
 namespace Luny.Interfaces
@@ -9,11 +9,11 @@ namespace Luny.Interfaces
 	public interface ILunyEngine
 	{
 		// Mandatory services
-		IApplicationServiceProvider Application { get; }
-		IDebugServiceProvider Debug { get; }
-		IEditorServiceProvider Editor { get; }
-		ISceneServiceProvider Scene { get; }
-		ITimeServiceProvider Time { get; }
+		IApplicationService Application { get; }
+		IDebugService Debug { get; }
+		IEditorService Editor { get; }
+		ISceneService Scene { get; }
+		ITimeService Time { get; }
 
 		// Lifecycle dispatch methods - receives callbacks from engine adapters
 		void OnStartup();
@@ -28,8 +28,8 @@ namespace Luny.Interfaces
 		Boolean IsObserverEnabled<T>() where T : IEngineLifecycleObserver;
 
 		// Service access
-		TService GetService<TService>() where TService : class, IEngineServiceProvider;
-		Boolean TryGetService<TService>(out TService service) where TService : class, IEngineServiceProvider;
-		Boolean HasService<TService>() where TService : class, IEngineServiceProvider;
+		TService GetService<TService>() where TService : class, IEngineService;
+		Boolean TryGetService<TService>(out TService service) where TService : class, IEngineService;
+		Boolean HasService<TService>() where TService : class, IEngineService;
 	}
 }

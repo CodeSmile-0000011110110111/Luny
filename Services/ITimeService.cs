@@ -1,12 +1,13 @@
+using Luny.Interfaces;
 using System;
 
-namespace Luny.Interfaces.Providers
+namespace Luny.Services
 {
 	/// <summary>
 	/// Provides engine-agnostic access to time and frame information.
 	/// Implementations should use engine-native time sources (Time.frameCount, Time.realtimeSinceStartup, etc.)
 	/// </summary>
-	public interface ITimeServiceProvider : IEngineServiceProvider
+	public interface ITimeService : IEngineService
 	{
 		/// <summary>
 		/// Gets the total number of frames that have been rendered since the application started.

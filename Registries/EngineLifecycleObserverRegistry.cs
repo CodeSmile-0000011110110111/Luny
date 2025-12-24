@@ -1,8 +1,8 @@
 using Luny.Attributes;
 using Luny.Diagnostics;
 using Luny.Interfaces;
-using Luny.Interfaces.Providers;
 using Luny.Proxies;
+using Luny.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,15 +19,15 @@ namespace Luny.Registries
 
 		public IEnumerable<IEngineLifecycleObserver> EnabledObservers => _enabledObservers;
 
-		private static Boolean IsSmokeTestScene(ISceneServiceProvider sceneServiceProvider)
+		private static Boolean IsSmokeTestScene(ISceneService sceneService)
 		{
-			var sceneName = sceneServiceProvider.CurrentSceneName;
+			var sceneName = sceneService.CurrentSceneName;
 			return sceneName.StartsWith("Luny") && sceneName.EndsWith("SmokeTest");
 		}
 
-		public EngineLifecycleObserverRegistry(ISceneServiceProvider sceneServiceProvider)
+		public EngineLifecycleObserverRegistry(ISceneService sceneService)
 		{
-			var isSmokeTestScene = IsSmokeTestScene(sceneServiceProvider);
+			var isSmokeTestScene = IsSmokeTestScene(sceneService);
 			DiscoverAndInstantiateObservers(isSmokeTestScene);
 		}
 

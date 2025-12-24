@@ -9,10 +9,10 @@ using System.Linq;
 namespace Luny.Registries
 {
 	/// <summary>
-	/// Generic service registry that discovers and holds engine provider services.
+	/// Generic service registry that discovers and holds engine services.
 	/// </summary>
 	/// <typeparam name="T">Service interface type that must implement IEngineProvider</typeparam>
-	internal sealed class EngineServiceRegistry<T> where T : class, IEngineServiceProvider
+	internal sealed class EngineServiceRegistry<T> where T : class, IEngineService
 	{
 		private readonly Dictionary<Type, T> _registeredServices = new();
 
@@ -61,12 +61,12 @@ namespace Luny.Registries
 			LunyLogger.LogInfo($"Registered {_registeredServices.Count} {typeof(T).Name} services in {ms} ms.", this);
 		}
 
-		internal TService Get<TService>() where TService : class, T, IEngineServiceProvider =>
+		internal TService Get<TService>() where TService : class, T, IEngineService =>
 			_registeredServices.TryGetValue(typeof(TService), out var service)
 				? (TService)service
 				: throw new LunyServiceException($"Required service {typeof(TService).FullName} not registered.");
 
-		internal Boolean TryGet<TService>(out TService service) where TService : class, T, IEngineServiceProvider
+		internal Boolean TryGet<TService>(out TService service) where TService : class, T, IEngineService
 		{
 			if (_registeredServices.TryGetValue(typeof(TService), out var registeredService))
 			{
@@ -78,6 +78,6 @@ namespace Luny.Registries
 			return false;
 		}
 
-		internal Boolean Has<TService>() where TService : class, T, IEngineServiceProvider => _registeredServices.ContainsKey(typeof(TService));
+		internal Boolean Has<TService>() where TService : class, T, IEngineService => _registeredServices.ContainsKey(typeof(TService));
 	}
 }
