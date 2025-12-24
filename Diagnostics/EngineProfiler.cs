@@ -1,4 +1,5 @@
 using Luny.Interfaces;
+using Luny.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,16 +7,24 @@ using System.Linq;
 
 namespace Luny.Diagnostics
 {
+	public interface IEngineProfiler
+	{
+		Int32 RollingAverageWindow { get; set; }
+
+		IProfilerSnapshot TakeSnapshot();
+	}
+
 	/// <summary>
 	/// Concrete implementation of engine-level profiling.
 	/// Tracks execution time for each lifecycle observer with configurable rolling average.
 	/// Public methods use [Conditional] attributes - completely stripped in release builds unless LUNY_PROFILE defined.
 	/// </summary>
-	public sealed class EngineProfiler
+	public sealed class EngineProfiler : IEngineProfiler
 	{
 		private readonly Dictionary<Type, ObserverMetrics> _metrics = new();
 		private readonly Dictionary<IEngineLifecycleObserver, Stopwatch> _activeObservers = new();
-		private Int32 _rollingAverageWindow = 60;
+		private Int32 _rollingAverageWindow = 30;
+		private ITimeService _timeService;
 
 		public Int32 RollingAverageWindow
 		{
@@ -23,8 +32,28 @@ namespace Luny.Diagnostics
 			set => _rollingAverageWindow = Math.Max(1, value); // Clamp to minimum 1
 		}
 
+		public EngineProfiler(ITimeService timeService) => _timeService = timeService;
+
+		public IProfilerSnapshot TakeSnapshot()
+		{
+#if DEBUG || LUNY_DEBUG || LUNY_PROFILE
+			return new ProfilerSnapshot
+			{
+				ObserverMetrics = _metrics.Values.ToList(),
+				Timestamp = DateTime.UtcNow,
+				FrameCount = _timeService.FrameCount,
+			};
+#else
+			return new ProfilerSnapshot
+			{
+				ObserverMetrics = Array.Empty<ObserverMetrics>(),
+				Timestamp = DateTime.UtcNow
+			};
+#endif
+		}
+
 		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
-		public void BeginObserver(IEngineLifecycleObserver observer)
+		internal void BeginObserver(IEngineLifecycleObserver observer)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
 			if (!_activeObservers.TryGetValue(observer, out var sw))
@@ -37,7 +66,7 @@ namespace Luny.Diagnostics
 		}
 
 		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
-		public void EndObserver(IEngineLifecycleObserver observer)
+		internal void EndObserver(IEngineLifecycleObserver observer)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
 			if (!_activeObservers.TryGetValue(observer, out var sw))
@@ -72,11 +101,8 @@ namespace Luny.Diagnostics
 				metrics.AverageMs = (metrics.AverageMs * (window - 1) + newSample) / window;
 			}
 
-			if (metrics.CallCount == 1)
-			{
-				metrics.MinMs = newSample;
-				metrics.MaxMs = newSample;
-			}
+			if (metrics.CallCount % RollingAverageWindow == 0 || metrics.CallCount == 1)
+				metrics.MinMs = metrics.MaxMs = newSample;
 			else
 			{
 				metrics.MinMs = Math.Min(metrics.MinMs, newSample);
@@ -85,29 +111,12 @@ namespace Luny.Diagnostics
 		}
 
 		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")] [Conditional("LUNY_PROFILE")]
-		public void RecordError(IEngineLifecycleObserver observer, Exception ex)
+		internal void RecordError(IEngineLifecycleObserver observer, Exception ex)
 		{
 #if DEBUG || LUNY_DEBUG || LUNY_PROFILE
 			var type = observer.GetType();
 			if (_metrics.TryGetValue(type, out var metrics))
 				metrics.ErrorCount++;
-#endif
-		}
-
-		public ProfilerSnapshot TakeSnapshot()
-		{
-#if DEBUG || LUNY_DEBUG || LUNY_PROFILE
-			return new ProfilerSnapshot
-			{
-				ObserverMetrics = _metrics.Values.ToList(),
-				Timestamp = DateTime.UtcNow,
-			};
-#else
-			return new ProfilerSnapshot
-			{
-				ObserverMetrics = Array.Empty<ObserverMetrics>(),
-				Timestamp = DateTime.UtcNow
-			};
 #endif
 		}
 

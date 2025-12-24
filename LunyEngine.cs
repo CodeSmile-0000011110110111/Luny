@@ -21,7 +21,7 @@ namespace Luny
 		/// Gets the engine profiler for performance monitoring.
 		/// Profiling methods are no-ops in release builds unless LUNY_PROFILE is defined.
 		/// </summary>
-		//internal EngineProfiler Profiler => _profiler;
+		public IEngineProfiler Profiler => _profiler;
 
 		/// <summary>
 		/// Gets the singleton instance, creating it on first access.
@@ -37,7 +37,7 @@ namespace Luny
 			AcquireMandatoryServices();
 
 			_observerRegistry = new EngineLifecycleObserverRegistry(Scene);
-			_profiler = new EngineProfiler();
+			_profiler = new EngineProfiler(Time);
 		}
 
 		public void OnStartup()

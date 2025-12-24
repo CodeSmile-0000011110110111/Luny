@@ -1,3 +1,4 @@
+using Luny.Diagnostics;
 using Luny.Services;
 using System;
 
@@ -14,6 +15,9 @@ namespace Luny.Interfaces
 		IEditorService Editor { get; }
 		ISceneService Scene { get; }
 		ITimeService Time { get; }
+
+		// Diagnostics
+		IEngineProfiler Profiler { get; }
 
 		// Lifecycle dispatch methods - receives callbacks from engine adapters
 		void OnStartup();
