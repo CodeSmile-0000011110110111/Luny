@@ -6,8 +6,8 @@ namespace Luny.Engine.Bridge
 	{
 		public String ActionMapName;
 		public String ActionName;
+		public String UserName;
 		public LunyInputActionPhase Phase;
-		public Int32 EventFrame;
 	}
 
 	public enum LunyInputActionPhase

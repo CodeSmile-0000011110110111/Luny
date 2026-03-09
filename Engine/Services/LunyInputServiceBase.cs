@@ -18,11 +18,6 @@ namespace Luny.Engine.Services
 		public event Action<LunyInputActionEvent> OnInputAction;
 
 		/// <summary>
-		/// Fired when any enabled action changes value.
-		/// </summary>
-		event Action<LunyInputEvent_old> OnInputAction_old;
-
-		/// <summary>
 		/// Gets last known axis vector for the named action.
 		/// </summary>
 		LunyVector2 GetDirection(String actionName);
@@ -62,13 +57,13 @@ namespace Luny.Engine.Services
 		/// </summary>
 		/// <param name="schemeName"></param>
 		void SetControlSchemes(params String[] schemeNames);
+
+		void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
 	}
 
 	public abstract class LunyInputServiceBase : LunyEngineServiceBase, ILunyInputService
 	{
 		public event Action<LunyInputActionEvent> OnInputAction;
-
-		public event Action<LunyInputEvent_old> OnInputAction_old;
 
 		private readonly Dictionary<String, LunyVector2> _directionVectors = new();
 		private readonly Dictionary<String, Single> _axisValues = new();
@@ -77,6 +72,8 @@ namespace Luny.Engine.Services
 		private readonly Dictionary<String, Boolean> _buttonJustPressed = new();
 
 		private readonly Dictionary<String, LunyInputActionEvent> _activeInputEvents = new();
+
+		protected LunyInputActionEvent LastInputEvent { get; private set; }
 
 		public LunyVector2 GetDirection(String actionName) => _directionVectors.TryGetValue(actionName, out var v) ? v : default;
 
@@ -95,36 +92,20 @@ namespace Luny.Engine.Services
 		public Boolean GetButtonJustPressed(String actionName) => _buttonJustPressed.TryGetValue(actionName, out var v) && v;
 
 		public abstract void SetControlSchemes(params String[] schemeNames);
+		public abstract void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
 
 		protected void SetDirectionalInput(String actionName, LunyVector2 value)
 		{
 			_directionVectors[actionName] = value;
-			var evt = new LunyInputEvent_old { ActionName = actionName, ActionType = LunyInputActionType.Directional, Direction = value };
-			OnInputAction_old?.Invoke(evt);
 		}
 
 		protected void SetAxisInput(String actionName, Single value)
 		{
 			_axisValues[actionName] = value;
-			var evt = new LunyInputEvent_old { ActionName = actionName, ActionType = LunyInputActionType.Axis, Axis = value };
-			OnInputAction_old?.Invoke(evt);
 		}
 
 		protected void SetButtonInput(String actionName, Boolean pressed, Single strength = 1f)
 		{
-			var wasPressed = GetButtonPressed(actionName);
-			var justPressed = pressed && !wasPressed;
-			var strengthValue = pressed ? strength : 0f;
-
-			var evt = new LunyInputEvent_old
-			{
-				ActionName = actionName,
-				ActionType = LunyInputActionType.Button,
-				IsPressed = _buttonPressed[actionName] = pressed,
-				IsJustPressed = _buttonJustPressed[actionName] = justPressed,
-				Strength = _buttonStrengthValues[actionName] = strengthValue,
-			};
-			OnInputAction_old?.Invoke(evt);
 		}
 
 		protected LunyInputActionEvent GetOrCreateInputActionEvent(String actionName)
@@ -135,9 +116,12 @@ namespace Luny.Engine.Services
 			return evt;
 		}
 
-		protected void HandleInputActionEvent(LunyInputActionEvent inputEvent) =>
+		protected void HandleInputActionEvent(LunyInputActionEvent inputEvent)
+		{
 			//LunyLogger.LogInfo($"[{inputEvent.EventFrame}] {inputEvent.ActionName} phase {inputEvent.Phase}", this);
+			LastInputEvent = inputEvent;
 			OnInputAction?.Invoke(inputEvent);
+		}
 
 		protected override void OnServiceFrameUpdate()
 		{
@@ -155,22 +139,10 @@ namespace Luny.Engine.Services
 		/// <summary>
 		/// Clears per-frame transition flags. Called at the start of each frame via OnServicePreUpdate.
 		/// </summary>
-		protected override void OnServicePostUpdate() => _buttonJustPressed.Clear();
-
-		/// <summary>
-		/// Simulates axis input for testing. In real Unity, this comes from InputSystem callbacks.
-		/// </summary>
-		internal void SimulateDirectionalInput(String actionName, LunyVector2 value) => SetDirectionalInput(actionName, value);
-
-		/// <summary>
-		/// Simulates axis input for testing. In real Unity, this comes from InputSystem callbacks.
-		/// </summary>
-		internal void SimulateAxisInput(String actionName, Single value) => SetAxisInput(actionName, value);
-
-		/// <summary>
-		/// Simulates button press for testing. In real Unity, this comes from InputSystem callbacks.
-		/// </summary>
-		internal void SimulateButtonInput(String actionName, Boolean pressed, Single analogValue = 1f) =>
-			SetButtonInput(actionName, pressed, analogValue);
+		protected override void OnServicePostUpdate()
+		{
+			LastInputEvent = null;
+			_buttonJustPressed.Clear();
+		}
 	}
 }
