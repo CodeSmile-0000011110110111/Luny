@@ -58,8 +58,9 @@ namespace Luny.Engine.Services
 		/// <param name="schemeName"></param>
 		void SetControlSchemes(params String[] schemeNames);
 
-		void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
+		void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyObject lunyObject);
 		void UnassignUser(String userName);
+		Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
 	}
 
 	public abstract class LunyInputServiceBase : LunyEngineServiceBase, ILunyInputService
@@ -93,22 +94,15 @@ namespace Luny.Engine.Services
 		public Boolean GetButtonJustPressed(String actionName) => _buttonJustPressed.TryGetValue(actionName, out var v) && v;
 
 		public abstract void SetControlSchemes(params String[] schemeNames);
-		public abstract void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
+		public abstract void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyObject lunyObject);
 		public abstract void UnassignUser(String userName);
+		public abstract Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
 
-		protected void SetDirectionalInput(String actionName, LunyVector2 value)
-		{
-			_directionVectors[actionName] = value;
-		}
+		protected void SetDirectionalInput(String actionName, LunyVector2 value) => _directionVectors[actionName] = value;
 
-		protected void SetAxisInput(String actionName, Single value)
-		{
-			_axisValues[actionName] = value;
-		}
+		protected void SetAxisInput(String actionName, Single value) => _axisValues[actionName] = value;
 
-		protected void SetButtonInput(String actionName, Boolean pressed, Single strength = 1f)
-		{
-		}
+		protected void SetButtonInput(String actionName, Boolean pressed, Single strength = 1f) {}
 
 		protected LunyInputActionEvent GetOrCreateInputActionEvent(String actionName)
 		{
