@@ -59,6 +59,7 @@ namespace Luny.Engine.Services
 		void SetControlSchemes(params String[] schemeNames);
 
 		void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
+		void UnassignUser(String userName);
 	}
 
 	public abstract class LunyInputServiceBase : LunyEngineServiceBase, ILunyInputService
@@ -93,6 +94,7 @@ namespace Luny.Engine.Services
 
 		public abstract void SetControlSchemes(params String[] schemeNames);
 		public abstract void AssignUserToLastDevice(String userName, ILunyObject lunyObject);
+		public abstract void UnassignUser(String userName);
 
 		protected void SetDirectionalInput(String actionName, LunyVector2 value)
 		{

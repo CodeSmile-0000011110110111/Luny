@@ -6,13 +6,12 @@ namespace Luny.Unity.Engine.Native
 {
 	public sealed class PlayerInputProfile
 	{
-		public UInt32 UserId { get; init; }
+		public UInt32 UserId { get; set; }
 		public String UserName { get; set; }
-		public Object ActionAsset { get; set; }
-		public Object UiInput { get; init; }
+		public Object Actions { get; set; }
+		public Object UiInput { get; set; }
 		public List<ILunyObject> Pawns { get; } = new();
-		public Boolean IsHost => UserId == 0;
 
-		public override String ToString() => $"PlayerInputProfile({UserId}, {ActionAsset})";
+		public override String ToString() => $"PlayerInputProfile({UserId}:{UserName}, {Actions})";
 	}
 }

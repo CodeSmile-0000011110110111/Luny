@@ -8,6 +8,8 @@ namespace Luny.Engine.Bridge
 		public String ActionName;
 		public String UserName;
 		public LunyInputActionPhase Phase;
+
+		public override String ToString() => $"Input({UserName}, {ActionMapName}/{ActionName}, {Phase})";
 	}
 
 	public enum LunyInputActionPhase
