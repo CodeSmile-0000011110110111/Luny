@@ -53,7 +53,7 @@ namespace Luny.Engine.Services
 		Single GetButtonStrength(String actionName);
 
 		/// <summary>
-		/// Activate a given control scheme eg "Gamepad" or "Keyboard&Mouse" to prevent other device input from coming through.
+		/// Activate a given control scheme eg `Gamepad` or <![CDATA[`Keyboard&Mouse`]]> to prevent other device input from coming through.
 		/// </summary>
 		/// <param name="schemeName"></param>
 		void SetControlSchemes(params String[] schemeNames);

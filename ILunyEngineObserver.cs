@@ -1,7 +1,7 @@
 using Luny.Engine.Bridge;
 using System;
 
-namespace Luny.Engine
+namespace Luny
 {
 	/// <summary>
 	/// Lifecycle observer interface - receives callbacks from LunyEngine.

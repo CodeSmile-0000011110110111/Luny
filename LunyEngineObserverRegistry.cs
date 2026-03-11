@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Luny.Engine
+namespace Luny
 {
 	public interface ILunyObserverRegistry {}
 

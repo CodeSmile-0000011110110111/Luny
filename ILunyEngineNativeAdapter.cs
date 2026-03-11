@@ -3,7 +3,7 @@ using Luny.Exceptions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Luny.Engine
+namespace Luny
 {
 	/// <summary>
 	/// Interface for the native engine adapter.

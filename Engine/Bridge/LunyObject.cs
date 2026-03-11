@@ -88,7 +88,7 @@ namespace Luny.Engine.Bridge
 		LunyNativeObjectId NativeObjectId { get; }
 		/// <summary>
 		/// Gets the underlying engine-native object (GameObject, Node) as generic System.Object type.
-		/// Use the Cast<T> method to avoid manually casting the reference.
+		/// Use the <see cref="Cast{T}"/> or <see cref="As{T}"/> methods to avoid manually casting the reference.
 		/// </summary>
 		SystemObject NativeObject { get; }
 		/// <summary>
