@@ -1,8 +1,7 @@
-﻿using Luny.Engine.Bridge;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Luny
+namespace Luny.Engine.Bridge
 {
 	public abstract class LunyRef<T> where T : class
 	{

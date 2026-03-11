@@ -1,4 +1,4 @@
-namespace Luny.Engine
+namespace Luny.Engine.Services
 {
 	/// <summary>
 	/// Marker interface for engine-agnostic services: APIs such as Debug, Input, etc.

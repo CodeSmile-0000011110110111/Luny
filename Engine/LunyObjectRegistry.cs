@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Luny.Engine.Registries
+namespace Luny.Engine
 {
 	public interface ILunyObjectRegistry
 	{

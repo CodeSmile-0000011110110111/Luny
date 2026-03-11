@@ -1,10 +1,9 @@
-﻿using Luny.Engine.Bridge;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Luny.Unity.Engine.Native
+namespace Luny.Engine.Bridge
 {
-	public sealed class PlayerInputProfile
+	public sealed class LunyInputUserProfile
 	{
 		public UInt32 UserId { get; set; }
 		public String UserName { get; set; }
@@ -12,6 +11,6 @@ namespace Luny.Unity.Engine.Native
 		public Object UiInput { get; set; }
 		public List<ILunyObject> Pawns { get; } = new();
 
-		public override String ToString() => $"PlayerInputProfile({UserId}:{UserName}, {Actions})";
+		public override String ToString() => $"{nameof(LunyInputUserProfile)}({UserId}:{UserName}, {Actions})";
 	}
 }
