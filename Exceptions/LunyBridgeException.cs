@@ -1,6 +1,6 @@
 using System;
 
-namespace Luny.Exceptions
+namespace Luny
 {
 	/// <summary>
 	/// Exception thrown when a bridging exception occurs in the Luny framework,

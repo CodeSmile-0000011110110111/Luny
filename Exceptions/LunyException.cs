@@ -1,6 +1,6 @@
 using System;
 
-namespace Luny.Exceptions
+namespace Luny
 {
 	/// <summary>
 	/// Base class for all exceptions thrown by the Luny framework.
