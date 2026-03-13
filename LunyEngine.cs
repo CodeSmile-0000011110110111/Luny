@@ -1,4 +1,3 @@
-using Luny.Engine;
 using Luny.Engine.Bridge;
 using Luny.Engine.Diagnostics;
 using Luny.Engine.Services;
@@ -10,25 +9,55 @@ using System.Runtime.CompilerServices;
 namespace Luny
 {
 	/// <summary>
-	/// LunyEngine interface - receives callbacks from engine adapters and provides service access.
+	/// See implementation: <see cref="Luny.LunyEngine"/>
 	/// </summary>
 	public interface ILunyEngine
 	{
-		// Mandatory services
+		/// <summary>
+		/// Application-level services, similar to [UnityEngine.Application](xref:UnityEngine.Application) and
+		/// [UnityEditor.EditorApplication](xref:UnityEditor.EditorApplication).
+		/// </summary>
 		ILunyApplicationService Application { get; }
+		/// <summary>
+		/// Asset loading/unloading and caching. Enables asset lookup by path/name. Returns placeholder assets instead of throwing exceptions.
+		/// </summary>
 		ILunyAssetService Asset { get; }
+		/// <summary>
+		/// Debug services, eg logging.
+		/// </summary>
 		ILunyDebugService Debug { get; }
+		/// <summary>
+		/// Editor services. Safe to call in runtime code (no-op, returning defaults).
+		/// </summary>
 		ILunyEditorService Editor { get; }
+		/// <summary>
+		/// Input services, forwards Action Map events and provides access to most recent input state.
+		/// </summary>
 		ILunyInputService Input { get; }
+		/// <summary>
+		/// Object services, mainly creating new prefab/primitive instances.
+		/// </summary>
 		ILunyObjectService Object { get; }
+		/// <summary>
+		/// Scene services, including in-scene object queries by name/path/type and scene load/unload.
+		/// </summary>
 		ILunySceneService Scene { get; }
+		/// <summary>
+		/// Time services, eg delta time, elapsed seconds, frame count.
+		/// </summary>
 		ILunyTimeService Time { get; }
 
+		/// <summary>
+		/// In-scene LunyObject instances get registered (cached) here after creation or ownership transfer to LunyEngine.
+		/// </summary>
 		ILunyObjectRegistry Objects { get; }
+		/// <summary>
+		/// LunyEngine profiler maintains a runtime record of observer execution metrics.
+		/// </summary>
 		ILunyEngineProfiler Profiler { get; }
 
 		/// <summary>
-		/// Will try to find an object by name in the scene. Queries already-cached objects first.
+		/// Will try to find an object by name in the scene. Queries already-cached objects first. Wraps found objects in a `LunyObject` instance.
 		/// </summary>
 		ILunyObject TryGetObject(String name, [CallerFilePath] String callerFilePath = "", [CallerLineNumber] Int32 callerLineNumber = 0);
 
@@ -38,36 +67,27 @@ namespace Luny
 		Boolean IsObserverEnabled<T>() where T : ILunyEngineObserver;
 		T GetObserver<T>() where T : ILunyEngineObserver;
 
-		// Service access
+		/// <summary>
+		/// Gets a service by type. Throws if the service is not registered. Note: essential services are exposed as properties.
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <returns></returns>
 		TService GetService<TService>() where TService : LunyEngineServiceBase;
+
+		/// <summary>
+		/// Gets a service by type, may return false/null.
+		/// </summary>
+		/// <param name="service"></param>
+		/// <typeparam name="TService"></typeparam>
+		/// <returns></returns>
 		Boolean TryGetService<TService>(out TService service) where TService : LunyEngineServiceBase;
+
+		/// <summary>
+		/// Queries if a service type is registered.
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <returns></returns>
 		Boolean HasService<TService>() where TService : LunyEngineServiceBase;
-	}
-
-	public interface ILunyEngineLifecycle
-	{
-		static void ThrowOnSingletonDuplication(LunyEngine instance)
-		{
-			if (instance != null)
-				throw new LunyLifecycleException($"Duplicate {nameof(LunyEngine)} singleton detected!");
-		}
-
-		static void ThrowIfNotCurrentAdapter(ILunyEngineNativeAdapter actualAdapter, ILunyEngineNativeAdapter expectedAdapter)
-		{
-#if DEBUG || LUNY_DEBUG
-			if (actualAdapter == null)
-				throw new LunyLifecycleException($"Null adapter passed into {nameof(ILunyEngineLifecycle)} interface method!");
-			if (actualAdapter != expectedAdapter)
-				throw new LunyLifecycleException($"Wrong adapter {actualAdapter} passed into {nameof(ILunyEngineLifecycle)} interface method!");
-#endif
-		}
-
-		// Lifecycle callbacks for engine adapter
-		void EngineStartup(ILunyEngineNativeAdapter nativeAdapter);
-		void EngineHeartbeat(ILunyEngineNativeAdapter nativeAdapter, Double fixedDeltaTime);
-		void EngineFrameUpdate(ILunyEngineNativeAdapter nativeAdapter, Double deltaTime);
-		void EngineFrameLateUpdate(ILunyEngineNativeAdapter nativeAdapter);
-		void EngineShutdown(ILunyEngineNativeAdapter nativeAdapter);
 	}
 
 	internal interface ILunyEngineInternal
@@ -76,7 +96,7 @@ namespace Luny
 	}
 
 	/// <summary>
-	/// Singleton engine that discovers and manages services and lifecycle observers.
+	/// LunyEngine singleton discovers and manages engine services and observers.
 	/// </summary>
 	public sealed partial class LunyEngine : ILunyEngine, ILunyEngineInternal, ILunyEngineLifecycle
 	{

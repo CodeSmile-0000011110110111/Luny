@@ -8,66 +8,73 @@ using SystemObject = System.Object;
 namespace Luny.Engine.Bridge
 {
 	/// <summary>
-	/// Engine-agnostic interface for engine objects/nodes.
-	/// Provides unified access to common object properties and operations.
-	/// Safeguards all access to avoid exceptions when the engine-native object may have been destroyed.
+	/// See implementation: <see cref="Luny.Engine.Bridge.LunyObject"/>
 	/// </summary>
 	public interface ILunyObject
 	{
 		/// <summary>
-		/// Sent once when the object is "created". Guaranteed to be the object's first lifecycle event.
-		/// Runs even if the object starts disabled.
+		/// Runs when the object was created or ownership was transferred to LunyEngine. Runs even if the object starts disabled.
 		/// </summary>
 		/// <remarks>
-		/// Runs only when an object gets 'registered' with Luny, not when the engine-native object is created. Engine-native
-		/// creation events (Unity: Awake / Godot: _init or ctor) will run before OnCreate.
+		/// Engine-native creation events (Unity: Awake, OnEnable / Godot: ctor, _init) will run before <see cref="OnCreated"/>.
+		/// <see cref="OnEnabled"/> will run right after <see cref="OnCreated"/> if the object starts enabled.
 		/// </remarks>
-		/// <remarks>
-		/// OnEnable will run right after OnCreate if the object starts enabled.
-		/// If the object starts disabled, OnEnable will run once the object gets enabled.
-		/// </remarks>
-		public event Action OnCreate;
+		public event Action OnCreated;
 		/// <summary>
-		/// Sent once when the object is "destroyed". Guaranteed to be the object's last lifecycle event.
-		/// Runs even for disabled objects.
+		/// Runs when the object was destroyed. Runs even if the object is disabled.
 		/// </summary>
 		/// <remarks>
-		/// Runs when the object is marked for deletion in Luny. The engine's native object is set inactive, but not yet destroyed.
+		/// The object's <see cref="NativeObject"/> reference is still accessible, it has not been destroyed yet.
 		/// </remarks>
-		public event Action OnDestroy;
+		public event Action OnDestroyed;
 		/// <summary>
-		/// Sent once just before the object runs its first OnUpdate (or OnFixedUpdate, see below).
-		/// If the object starts disabled, OnReady is deferred until the object gets enabled.
-		/// If the object gets or is enabled, OnEnable is guaranteed to run before OnReady. Both run in the same frame.
+		/// Runs once before the object's first frame processing, before OnFrameUpdate and OnHeartbeat.
+		/// If the object starts disabled, OnReady runs after the object first gets enabled.
 		/// </summary>
 		/// <remarks>
-		/// Depending on whether OnFixedStep happens to run in the frame the object becomes "ready", the event order is either:
-		///		OnReady => OnUpdate (first) => OnLateUpdate (first)
+		/// It is not guaranteed that the object will simulate physics in its first active frame. The event order is either:
+		///		OnReady => OnFrameUpdate (object's first)
 		/// or:
-		///		OnReady => OnFixedStep (first) => OnUpdate (first) => OnLateUpdate (first)
+		///		OnReady => OnHeartbeat (object's first) => OnFrameUpdate (object's first)
 		/// </remarks>
 		public event Action OnReady;
 		/// <summary>
-		/// Sent every time the object's enabled state changes to "enabled": visible, updating, receiving events, interacting with other objects.
-		/// Also runs right after OnCreate if the object starts enabled.
-		/// The engine-native object is already set enabled when this event runs.
+		/// Runs when the object's enabled state changes to "enabled": visible, updating, receiving events, interacting with other objects.
+		/// Also runs right after OnCreated if the object starts enabled.
+		/// </summary>
+		public event Action OnEnabled;
+		/// <summary>
+		/// Runs when the object's enabled state changes to "disabled": hidden, not updating, not receiving events, not interacting with other objects.
+		/// </summary>
+		public event Action OnDisabled;
+
+		/// <summary>
+		/// Runs when the object's collider has "entered" (overlaps) another static or non-kinematic collider.
+		/// </summary>
+		public event Action<LunyCollision> OnCollisionEntered;
+		/// <summary>
+		/// Runs when the object's collider stops overlapping/touching another static or non-kinematic collider.
+		/// </summary>
+		public event Action<LunyCollision> OnCollisionExited;
+		/// <summary>
+		/// Runs every heartbeat while the collision is ongoing.
+		/// </summary>
+		public event Action<LunyCollision> OnCollisionUpdate;
+		/// <summary>
+		/// Runs when first overlapping a trigger collider.
+		/// </summary>
+		public event Action<LunyCollider> OnTriggerEntered;
+		/// <summary>
+		/// Runs when leaving a trigger collider.
+		/// </summary>
+		public event Action<LunyCollider> OnTriggerExited;
+		/// <summary>
+		/// Runs while overlapping a trigger collider.
 		/// </summary>
 		/// <remarks>
-		/// OnDestroy event will run even when a disabled object gets destroyed.
+		/// In Unity, to receive this event you have to explicitly enable it:
+		/// **Project Settings**: Physics/Settings -> GameObject -> Generate On Trigger Stay Events
 		/// </remarks>
-		public event Action OnEnable;
-		/// <summary>
-		/// Sent every time the object's enabled state changes to "disabled": hidden, not updating, not receiving events, not interacting with other objects.
-		/// If the object is enabled and gets destroyed, OnDisable will run before OnDestroy.
-		/// The engine-native object is already set disabled when this event runs.
-		/// </summary>
-		public event Action OnDisable;
-
-		public event Action<LunyCollision> OnCollisionEntered;
-		public event Action<LunyCollision> OnCollisionExited;
-		public event Action<LunyCollision> OnCollisionUpdate;
-		public event Action<LunyCollider> OnTriggerEntered;
-		public event Action<LunyCollider> OnTriggerExited;
 		public event Action<LunyCollider> OnTriggerUpdate;
 		public event Action<LunyCollision2D> OnCollisionEntered2D;
 		public event Action<LunyCollision2D> OnCollisionExited2D;
@@ -77,13 +84,13 @@ namespace Luny.Engine.Bridge
 		public event Action<LunyCollider2D> OnTriggerUpdate2D;
 
 		/// <summary>
-		/// LunyScript-specific unique, immutable identifier. This ID is distinct from engine's native object ID!
+		/// Unique, immutable identifier for LunyObject. This ID is distinct from engine's native object ID!
 		/// </summary>
 		LunyObjectId LunyObjectId { get; }
 		/// <summary>
-		/// Engine-specific unique, immutable identifier, subject to engine's behaviour (ie may change between runs, or not).
-		/// The ID is valid even after the engine-native object has been destroyed to aid debugging.
+		/// Engine-native object's unique, immutable identifier. Subject to engine's behaviour (ie may change between runs).
 		/// </summary>
+		/// <remarks>To aid debugging, this ID remains valid after the engine-native object has been destroyed.</remarks>
 		LunyNativeObjectId NativeObjectId { get; }
 		/// <summary>
 		/// Gets the underlying engine-native object (GameObject, Node) as generic System.Object type.
@@ -91,31 +98,29 @@ namespace Luny.Engine.Bridge
 		/// </summary>
 		SystemObject NativeObject { get; }
 		/// <summary>
-		/// The transform of this object.
+		/// The <see cref="Luny.Engine.Bridge.LunyTransform"/> of this object.
 		/// </summary>
 		LunyTransform Transform { get; }
 		/// <summary>
 		/// The name of the object in the scene hierarchy.
 		/// </summary>
+		/// <remarks>To aid debugging, this property remains valid even after the object has been destroyed.</remarks>
 		String Name { get; set; }
 		/// <summary>
-		/// Whether the underlying engine object is valid/exists. Most commonly this means "not null" but in some engines like Godot,
-		/// it also means the object is still in the scene hierarchy.
+		/// Whether the object and its native representation are valid (not null, not destroyed).
 		/// </summary>
 		Boolean IsValid { get; }
 		/// <summary>
-		/// Set when Destroy() was called. Some actions may still be valid at this point though.
+		/// Is true when Destroy() was called on the NativeObject and it was set to null.
 		/// </summary>
-		Boolean IsDestroyed { get; }
+		Boolean IsNativeObjectValid { get; }
 		/// <summary>
-		/// Whether the engine object is processing and visible.
-		/// Matches the "Active" state of Unity. Most events (update, input, collision, ..) will not run when the object is disabled.
-		/// OnDestroy is the exception: It will run for a disabled object when it gets destroyed.
+		/// Whether the engine object is processing and visible. Matches the "Active" state of Unity.
 		/// </summary>
 		/// <remarks>
-		/// CAUTION: IsEnabled also toggles visibility. If the object's IsVisible is set to false,
-		/// and then is disabled and enabled again, it will also be visible. If you wish the object to remain invisible,
-		/// you will have to set IsVisible=false after re-enabling the object. This is a decent compromise supported by all engines.
+		/// The object may be enabled, but still be disabled in the hierarchy due to a parent not being enabled.
+		/// IsEnabled also toggles visibility. If the object's IsVisible was set to false, and then the object gets enabled,
+		/// the object's IsVisible state will also change to true.
 		/// </remarks>
 		Boolean IsEnabled { get; set; }
 		/// <summary>
@@ -123,22 +128,13 @@ namespace Luny.Engine.Bridge
 		/// </summary>
 		Boolean IsEnabledInHierarchy { get; }
 		/// <summary>
-		/// Whether the object is visible (gets rendered).
-		/// CAUTION: This property does not imply that the object can be "seen"! IsVisible might be true while the object isn't visible
-		/// on the screen, for example because it's outside the camera's viewport, obstructed by other objects closer to the camera,
-		/// scaled infinitely small, completely transparent, or missing a resource (shader, texture, mesh) required to display it.
-		/// </summary>
-		Boolean IsVisible { get; set; }
-
-		/// <summary>
-		/// Called when the framework decides to work with the object ("object awakes").
-		/// This sends the OnCreate event and - if Enabled - the OnEnable event.
+		/// Whether the object is visible (will render).
 		/// </summary>
 		/// <remarks>
-		/// Must only be called once prior to using the LunyObject instance.
-		/// LunyScript will automatically call this.
+		/// This property does NOT imply that the object is currently visible on screen. It is technically visible, but may still
+		/// be outside the camera's frame, obstructed by other objects, fully transparent, scaled infinitely small, etc.
 		/// </remarks>
-		void Initialize();
+		Boolean IsVisible { get; set; }
 
 		/// <summary>
 		/// Gets the engine-native object as type T. Returns null for non-matching types.
@@ -155,26 +151,35 @@ namespace Luny.Engine.Bridge
 		T Cast<T>() where T : class;
 
 		/// <summary>
-		/// Marks this object for destruction.
-		/// Triggers OnDisable (if object is enabled) and OnDestroy events.
-		/// The engine-native object is destroyed at the end of the current frame.
+		/// Marks this object for destruction. If object is enabled, will run its OnDisabled event. Then it run its OnDestroyed event.
 		/// </summary>
+		/// <remarks>The engine-native object destruction is deferred until the end of the current frame to prevent exceptions.</remarks>
 		void Destroy();
 
+		/// <summary>
+		/// Creates a new instance of the current object.
+		/// </summary>
+		/// <returns></returns>
 		ILunyObject Clone();
+		/// <summary>
+		/// Creates a new instance of the current object and parents it.
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <returns></returns>
 		ILunyObject Clone(LunyTransform parent);
 	}
 
 	/// <summary>
-	/// Proxy for engine-native objects/nodes/actors/...
+	/// Engine-agnostic wrapper for engine objects.
+	/// Safeguards against NullReferenceExceptions when the engine-native object may have been destroyed.
 	/// </summary>
 	public abstract class LunyObject : ILunyObject
 	{
-		public event Action OnCreate;
-		public event Action OnDestroy;
+		public event Action OnCreated;
+		public event Action OnDestroyed;
 		public event Action OnReady;
-		public event Action OnEnable;
-		public event Action OnDisable;
+		public event Action OnEnabled;
+		public event Action OnDisabled;
 		public event Action<LunyCollision> OnCollisionEntered;
 		public event Action<LunyCollision> OnCollisionExited;
 		public event Action<LunyCollision> OnCollisionUpdate;
@@ -224,8 +229,8 @@ namespace Luny.Engine.Bridge
 			}
 		}
 
-		public Boolean IsValid => !IsDestroyed && IsNativeObjectValid();
-		public Boolean IsDestroyed => _state.IsDestroyed || _state.IsDestroying;
+		public Boolean IsValid => !IsNativeObjectValid && IsNativeObjectReferenceValid();
+		public Boolean IsNativeObjectValid => _state.IsDestroyed || _state.IsDestroying;
 
 		public Boolean IsEnabled
 		{
@@ -279,7 +284,7 @@ namespace Luny.Engine.Bridge
 			DebugNativeObjectName = GetNativeObjectName();
 
 			Lifecycle.OnObjectCreated(this);
-			OnCreate?.Invoke();
+			OnCreated?.Invoke();
 
 			SetVisibleState(_state.IsVisible);
 
@@ -302,7 +307,7 @@ namespace Luny.Engine.Bridge
 			if (_state.IsEnabled)
 				SetEnabledState(false);
 
-			var onDestroyEvent = OnDestroy;
+			var onDestroyEvent = OnDestroyed;
 			ClearObjectEvents();
 			onDestroyEvent?.Invoke();
 
@@ -320,11 +325,11 @@ namespace Luny.Engine.Bridge
 
 		private void ClearObjectEvents()
 		{
-			OnCreate = null;
-			OnEnable = null;
-			OnDisable = null;
+			OnCreated = null;
+			OnEnabled = null;
+			OnDisabled = null;
 			OnReady = null;
-			OnDestroy = null;
+			OnDestroyed = null;
 			OnCollisionEntered = null;
 			OnCollisionExited = null;
 			OnCollisionUpdate = null;
@@ -378,13 +383,13 @@ namespace Luny.Engine.Bridge
 			{
 				SetNativeObjectEnabled();
 				Lifecycle.OnObjectEnabled(this);
-				OnEnable?.Invoke();
+				OnEnabled?.Invoke();
 			}
 			else
 			{
 				SetNativeObjectDisabled();
 				Lifecycle.OnObjectDisabled(this);
-				OnDisable?.Invoke();
+				OnDisabled?.Invoke();
 			}
 		}
 
@@ -399,7 +404,7 @@ namespace Luny.Engine.Bridge
 
 		protected abstract LunyTransform GetNativeTransform();
 		protected abstract void DestroyNativeObject();
-		protected abstract Boolean IsNativeObjectValid();
+		protected abstract Boolean IsNativeObjectReferenceValid();
 		protected abstract String GetNativeObjectName();
 		protected abstract void SetNativeObjectName(String name);
 		protected abstract Boolean GetNativeObjectEnabledInHierarchy();

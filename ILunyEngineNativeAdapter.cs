@@ -7,7 +7,7 @@ namespace Luny
 	/// <summary>
 	/// Interface for the native engine adapter.
 	/// </summary>
-	public interface ILunyEngineNativeAdapter
+	internal interface ILunyEngineNativeAdapter
 	{
 		static Boolean IsApplicationQuitting;
 

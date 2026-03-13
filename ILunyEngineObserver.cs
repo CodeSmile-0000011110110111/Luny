@@ -4,37 +4,42 @@ using System;
 namespace Luny
 {
 	/// <summary>
-	/// Lifecycle observer interface - receives callbacks from LunyEngine.
+	/// Lifecycle observer interface. To be implemented by observers of LunyEngine which wish to receive the engine-agnostic lifecycle callbacks.
 	/// </summary>
 	public interface ILunyEngineObserver
 	{
 		public Boolean Enabled => true;
 
 		/// <summary>
-		/// Runs once per lifetime, when the application launches. Processing of the first frame has not begun.
+		/// Runs when the application launches (once-only). Processing of the first frame has not begun.
 		/// </summary>
 		void OnEngineStartup();
 
 		/// <summary>
-		/// Runs once per frame, before both frame update / heartbeat methods.
+		/// Runs once per frame, before any frame update / heartbeat method.
 		/// </summary>
 		void OnEngineFrameBegins() {}
+
+		/// <summary>
+		/// Runs once per frame, after all frame update methods ran (eg "end of frame").
+		/// </summary>
+		void OnEngineFrameEnds() {}
 
 		/// <summary>
 		/// Runs on the engine's fixed stepping frequency. Most suitable for deterministic game logic and to modify the Physics simulation.
 		/// </summary>
 		/// <remarks>
-		/// Engine internal physics simulation occurs right after a Heartbeat and before FrameUpdate.
+		/// Engine internal physics simulation occurs right after Heartbeat, before FrameUpdate.
 		///
 		/// Caution: Heartbeat frequency depends on engine time-stepping settings, and is not guaranteed to be in sync with FrameRate.
 		/// The behaviour depends on each frame's delta time (frame rate) and the engine's fixed step (or physics) time setting.
 		///		- Heartbeat may be called less often than FrameUpdate
-		///		- Heartbeat may be called several times in a single frame (all before FrameUpdate)
+		///		- Heartbeat may be called several times in a single frame (multiple times before FrameUpdate)
 		/// </remarks>
 		void OnEngineHeartbeat();
 
 		/// <summary>
-		/// Runs once per frame. If the current frame runs a Heartbeat, the Heartbeat would have run right before.
+		/// Runs once per frame. It runs right after the Heartbeat (if any).
 		/// </summary>
 		void OnEngineFrameUpdate();
 
@@ -44,44 +49,34 @@ namespace Luny
 		void OnEngineFrameLateUpdate() {}
 
 		/// <summary>
-		/// Runs once per frame, after all FrameUpdate and FrameLateUpdate ran.
-		/// </summary>
-		void OnEngineFrameEnds() {}
-
-		/// <summary>
-		/// Runs once per lifetime, when the application quits. Runs after all of the current frame's Heartbeat/Update methods ran.
+		/// Runs when the application exits (once-only). Runs after frame processing has completed.
 		/// </summary>
 		void OnEngineShutdown();
 
 		/// <summary>
-		/// Runs when a scene was loaded, before frame processing begins. This includes the first scene which the engine loads automatically.
+		/// Runs when a scene was loaded, before frame processing begins. Also fires in the first scene the engine launches with.
 		/// </summary>
 		/// <param name="loadedScene"></param>
 		void OnSceneLoaded(ILunyScene loadedScene) {}
 
 		/// <summary>
-		/// Runs when a scene was unloaded. All objects have been invalidated, if not destroyed.
+		/// Runs when a scene was unloaded. After all previous scene's objects have been invalidated (destroyed).
 		/// </summary>
 		/// <param name="unloadedScene"></param>
 		void OnSceneUnloaded(ILunyScene unloadedScene) {}
 
 		/// <summary>
-		/// Called when a LunyObject registered with LunyEngine.
-		/// Runs when object is created, before object's OnCreate callback. Its NativeObject is already assigned.
+		/// Called when a LunyObject registered with LunyEngine either via instantiation or handing ownership of an existing
+		/// engine object to LunyEngine. Runs before the object's OnCreated callback.
 		/// </summary>
-		/// <remarks>
-		/// In future it may also be called for transferring native object ownership to LunyEngine.
-		/// </remarks>
 		/// <param name="lunyObject"></param>
 		void OnObjectRegistered(ILunyObject lunyObject) {}
 
 		/// <summary>
-		/// Called when a LunyObject has unregistered from LunyEngine. Runs when object is destroyed, after object's OnDestroy callback.
-		/// The LunyObject instance is already invalidated but its NativeObject is still valid.
+		/// Called when a LunyObject has unregistered from LunyEngine either by destroying it or when transferring ownership back
+		/// to the native engine. Runs after object's OnDestroy callback. The object's `IsValid` is false but its NativeObject reference
+		/// can still be accessed.
 		/// </summary>
-		/// <remarks>
-		/// In future it may also be called for releasing ownership of native objects from LunyEngine.
-		/// </remarks>
 		/// <param name="lunyObject"></param>
 		void OnObjectUnregistered(ILunyObject lunyObject) {}
 	}
