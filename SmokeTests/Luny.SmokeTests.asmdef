@@ -1,4 +1,19 @@
-﻿{
-  "name": "Luny.SmokeTests",
-  "references":[ "GUID:d3eaacbbd31dbfe4bbd3a9bce5c65632", "GUID:d8105533248dd994a834ff6858cf7898" ]
+{
+    "name": "Luny.SmokeTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d3eaacbbd31dbfe4bbd3a9bce5c65632",
+        "GUID:d8105533248dd994a834ff6858cf7898"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
