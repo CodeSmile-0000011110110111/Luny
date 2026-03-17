@@ -116,7 +116,7 @@ namespace Luny
 			ILunyEngineLifecycle.ThrowIfNotCurrentAdapter(nativeAdapter, s_EngineAdapter);
 
 			_timeInternal.SetFixedDeltaTime(fixedDeltaTime);
-			RunEnginePreUpdateOncePerFrame();
+			RunEngineFrameBegins();
 
 			foreach (var observer in _observerRegistry.EnabledObservers)
 			{
@@ -147,7 +147,7 @@ namespace Luny
 			ILunyEngineLifecycle.ThrowIfNotCurrentAdapter(nativeAdapter, s_EngineAdapter);
 
 			_timeInternal.SetDeltaTime(deltaTime);
-			RunEnginePreUpdateOncePerFrame();
+			RunEngineFrameBegins();
 
 			foreach (var observer in _observerRegistry.EnabledObservers)
 			{
@@ -180,6 +180,9 @@ namespace Luny
 			foreach (var observer in _observerRegistry.EnabledObservers)
 			{
 				_profiler.BeginObserver(observer);
+
+				_serviceRegistry.OnEngineFrameLateUpdate();
+
 				try
 				{
 					observer.OnEngineFrameLateUpdate();
@@ -197,10 +200,10 @@ namespace Luny
 				}
 			}
 
-			RunEnginePostUpdate();
+			RunEngineFrameEnds();
 		}
 
-		private void RunEnginePreUpdateOncePerFrame()
+		private void RunEngineFrameBegins()
 		{
 			if (!_didCallPreUpdateThisFrame)
 			{
@@ -208,8 +211,8 @@ namespace Luny
 
 				// engine services first
 				_timeInternal.IncrementFrameCount();
-				_serviceRegistry.OnEnginePreUpdate();
-				_objectLifecycle.OnEnginePreUpdate();
+				_serviceRegistry.OnEngineFrameBegins();
+				_objectLifecycle.OnEngineFrameBegins();
 
 				foreach (var observer in _observerRegistry.EnabledObservers)
 				{
@@ -233,7 +236,7 @@ namespace Luny
 			}
 		}
 
-		private void RunEnginePostUpdate()
+		private void RunEngineFrameEnds()
 		{
 			foreach (var observer in _observerRegistry.EnabledObservers)
 			{
@@ -256,8 +259,8 @@ namespace Luny
 			}
 
 			// run "structural changes" here ..
-			_serviceRegistry.OnEnginePostUpdate();
-			_objectLifecycle.OnEnginePostUpdate(); // should run last to guarantee object cleanup
+			_serviceRegistry.OnEngineFrameEnds();
+			_objectLifecycle.OnEngineFrameEnds(); // should run last to guarantee object cleanup
 
 			_didCallPreUpdateThisFrame = false;
 		}

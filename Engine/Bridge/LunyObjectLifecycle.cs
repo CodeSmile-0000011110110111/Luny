@@ -52,8 +52,8 @@ namespace Luny.Engine.Bridge
 
 		~LunyObjectLifecycle() => LunyTraceLogger.LogInfoFinalized(this);
 
-		public void OnEnginePreUpdate() => ProcessPendingReady();
-		public void OnEnginePostUpdate() => ProcessPendingDestroy();
+		public void OnEngineFrameBegins() => ProcessPendingReady();
+		public void OnEngineFrameEnds() => ProcessPendingDestroy();
 
 		private void ProcessPendingReady()
 		{

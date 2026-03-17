@@ -6,7 +6,7 @@ namespace Luny.Engine.Services
 	/// </summary>
 	public interface ILunyEngineService {}
 
-	public abstract class LunyEngineServiceBase
+	public abstract class LunyEngineServiceBase : ILunyEngineService
 	{
 		internal void Initialize()
 		{
@@ -29,16 +29,18 @@ namespace Luny.Engine.Services
 			LunyTraceLogger.LogInfoShutdownComplete(this);
 		}
 
-		internal void PreUpdate() => OnServicePreUpdate();
+		internal void FrameBegins() => OnServiceFrameBegins();
 		internal void Heartbeat() => OnServiceHeartbeat();
 		internal void FrameUpdate() => OnServiceFrameUpdate();
-		internal void PostUpdate() => OnServicePostUpdate();
+		internal void FrameLateUpdate() => OnServiceFrameLateUpdate();
+		internal void FrameEnds() => OnServiceFrameEnds();
 		protected virtual void OnServiceInitialize() {}
 		protected virtual void OnServiceStartup() {}
 		protected virtual void OnServiceShutdown() {}
-		protected virtual void OnServicePreUpdate() {}
+		protected virtual void OnServiceFrameBegins() {}
 		protected virtual void OnServiceHeartbeat() {}
 		protected virtual void OnServiceFrameUpdate() {}
-		protected virtual void OnServicePostUpdate() {}
+		protected virtual void OnServiceFrameLateUpdate() {}
+		protected virtual void OnServiceFrameEnds() {}
 	}
 }

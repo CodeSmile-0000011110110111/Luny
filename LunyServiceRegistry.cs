@@ -86,10 +86,10 @@ namespace Luny
 			GC.SuppressFinalize(this);
 		}
 
-		internal void OnEnginePreUpdate()
+		internal void OnEngineFrameBegins()
 		{
 			foreach (var service in _registeredServices.Values)
-				service.PreUpdate();
+				service.FrameBegins();
 		}
 
 		internal void OnEngineHeartbeat()
@@ -104,10 +104,16 @@ namespace Luny
 				service.FrameUpdate();
 		}
 
-		internal void OnEnginePostUpdate()
+		internal void OnEngineFrameLateUpdate()
 		{
 			foreach (var service in _registeredServices.Values)
-				service.PostUpdate();
+				service.FrameLateUpdate();
+		}
+
+		internal void OnEngineFrameEnds()
+		{
+			foreach (var service in _registeredServices.Values)
+				service.FrameEnds();
 		}
 
 		private void DiscoverAndInstantiateServices(NativeEngine engine)
