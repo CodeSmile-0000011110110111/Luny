@@ -121,15 +121,16 @@ namespace Luny.Engine.Services
 			OnInputAction?.Invoke(inputEvent);
 		}
 
-		protected override void OnServiceFrameUpdate()
+		//protected override void OnServiceFrameUpdate()
+		protected override void OnServiceFrameBegins()
 		{
 			foreach (var inputEvent in _activeInputEvents.Values)
 			{
 				var phase = inputEvent.Phase;
-				if (phase == LunyInputActionPhase.Performed || phase == LunyInputActionPhase.Started)
-					inputEvent.Phase = LunyInputActionPhase.Performing;
+				if (phase == LunyInputActionPhase.Performed)
+					phase = inputEvent.Phase = LunyInputActionPhase.Performing;
 
-				if (inputEvent.Phase == LunyInputActionPhase.Performing)
+				if (phase == LunyInputActionPhase.Performing)
 					OnInputAction?.Invoke(inputEvent);
 			}
 		}
