@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -30,8 +29,8 @@ namespace Luny
 		Variable this[String key] { get; set; }
 		T Get<T>(String key);
 		Table.VarHandle GetHandle(String key);
-		Table.VarHandle DefineVariable(String key, Variable value);
-		Table.VarHandle DefineConstant(String key, Variable value);
+		Table.VarHandle DefineVariable(String key, Variable variable);
+		Table.VarHandle DefineConstant(String key, Variable variable);
 		Table.VarHandle<T> GetHandle<T>(String key);
 		Boolean Has(String key);
 		Boolean Remove(String key);
@@ -122,7 +121,7 @@ namespace Luny
 				return (VarHandle)existing;
 
 			var handle = new VarHandle(this, key);
-			handle.SetInitialValue(0.0);
+			handle.SetVariable(0.0);
 			_table[key] = handle;
 			return handle;
 		}
@@ -144,26 +143,42 @@ namespace Luny
 		/// Defines a variable with initial value.
 		/// </summary>
 		/// <param name="key"></param>
-		/// <param name="value"></param>
+		/// <param name="variable"></param>
 		/// <returns></returns>
 		/// <exception cref="InvalidOperationException"></exception>
-		public VarHandle DefineVariable(String key, Variable value) => Define(key, value, false);
+		public VarHandle DefineVariable(String key, Variable variable) => Define(key, variable, false);
 
 		/// <summary>
 		/// Defines a constant variable that cannot be modified after creation.
 		/// </summary>
 		/// <param name="key">The constant name.</param>
-		/// <param name="value">The constant value.</param>
+		/// <param name="variable">The constant value.</param>
 		/// <returns>The handle to the constant.</returns>
-		public VarHandle DefineConstant(String key, Variable value) => Define(key, value, true);
+		public VarHandle DefineConstant(String key, Variable variable) => Define(key, variable, true);
 
-		private VarHandle Define(String key, Variable value, Boolean constant)
+		private VarHandle Define(String key, Variable variable, Boolean constant)
 		{
 			if (_table.TryGetValue(key, out var existing))
-				throw new InvalidOperationException($"Attempt to redefine {(constant ? "constant" : "variable")}: {existing}");
+			{
+				if (existing is VarHandle scalar)
+				{
+					if (scalar.IsConstant)
+					{
+						if (scalar.Variable.Value != variable.Value)
+							throw new InvalidOperationException($"Attempt to redefine constant {scalar} with new value: {variable.Value}");
+
+						return scalar;
+					}
+
+					scalar.Variable = variable;
+					return scalar;
+				}
+
+				throw new InvalidOperationException($"Attempt to redefine variable {existing} as {key}={variable}");
+			}
 
 			var handle = new VarHandle(this, key, constant);
-			handle.SetInitialValue(value);
+			handle.SetVariable(variable);
 			_table[key] = handle;
 			return handle;
 		}
@@ -248,7 +263,8 @@ namespace Luny
 				if (this is VarHandle<T> typed)
 					return typed;
 
-				throw new InvalidCastException($"{nameof(VarHandleBase)} '{_name}' is {GetType().Name}, not {nameof(VarHandleBase)}<{typeof(T).Name}>");
+				throw new InvalidCastException(
+					$"{nameof(VarHandleBase)} '{_name}' is {GetType().Name}, not {nameof(VarHandleBase)}<{typeof(T).Name}>");
 			}
 
 			public Boolean As<T>(out VarHandle<T> result)
@@ -282,7 +298,7 @@ namespace Luny
 			internal VarHandle(Table owner, String name, Boolean isConstant = false)
 				: base(owner, name, isConstant) {}
 
-			internal void SetInitialValue(Variable value) => _variable = value;
+			internal void SetVariable(Variable value) => _variable = value;
 
 			public override void Reset() => _variable = default;
 
