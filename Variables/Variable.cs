@@ -11,14 +11,9 @@ namespace Luny
 
 		public enum ValueType
 		{
-			//Null,
 			Number,
 			Boolean,
 			String,
-			// Struct,
-			// Vector2,
-			// Vector3,
-			// Quaternion,
 		}
 
 		private const String DefaultName = "(N/A)";
@@ -291,8 +286,6 @@ namespace Luny
 			ValueType.Number => $"{_numValue} ({_type})",
 			ValueType.Boolean => $"{IsTrue} ({_type})",
 			ValueType.String => $"{_refValue} ({_type})",
-			// ValueType.Vector2 => $"{_refValue} ({_type})",
-			// ValueType.Vector3 => $"{_refValue} ({_type})",
 			var _ => $"<{_type}>",
 		};
 
