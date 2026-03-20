@@ -160,6 +160,7 @@ namespace Luny
 		{
 			if (_table.TryGetValue(key, out var existing))
 			{
+				// Constant redefinition returns existing constant IF the value remains the same
 				if (existing is VarHandle scalar)
 				{
 					if (scalar.IsConstant)
@@ -170,11 +171,10 @@ namespace Luny
 						return scalar;
 					}
 
-					scalar.Variable = variable;
-					return scalar;
+					throw new InvalidOperationException($"Attempt to redefine variable: [{scalar.Name}] ({scalar.Variable}) with ({variable})");
 				}
 
-				throw new InvalidOperationException($"Attempt to redefine variable {existing} as {key}={variable}");
+				throw new InvalidOperationException($"Attempt to redefine variable: [{existing.Name}] ({existing}) with ({variable})");
 			}
 
 			var handle = new VarHandle(this, key, constant);

@@ -14,6 +14,7 @@ namespace Luny
 			Number,
 			Boolean,
 			String,
+			Reference,
 		}
 
 		private const String DefaultName = "(N/A)";
@@ -26,7 +27,7 @@ namespace Luny
 #endif
 
 		private readonly Double _numValue;
-		private readonly Object _refValue;
+		private readonly Object _string;
 		private readonly ValueType _type;
 
 		public ValueType Type => _type;
@@ -39,25 +40,24 @@ namespace Luny
 		{
 			ValueType.Number => _numValue,
 			ValueType.Boolean => _numValue,
-			var _ => 0.0,
+			var _ => throw new InvalidOperationException($"Attempt to get number value from variable: {this}"),
 		};
 		public Object Object => _type switch
 		{
-			//ValueType.Null => _refValue,
-			ValueType.String => _refValue,
-			var _ => null,
+			ValueType.String => _string,
+			var _ => _numValue,
 		};
-		public Boolean IsNull => _type == ValueType.String && _refValue == null;
-		public Boolean IsNullOrEmpty => _type == ValueType.String && String.IsNullOrEmpty((String)_refValue);
-		public Boolean IsNullOrWhitespace => _type == ValueType.String && String.IsNullOrWhiteSpace((String)_refValue);
+		public Boolean IsNull => _type == ValueType.String && _string == null;
+		public Boolean IsNullOrEmpty => _type == ValueType.String && String.IsNullOrEmpty((String)_string);
+		public Boolean IsNullOrWhitespace => _type == ValueType.String && String.IsNullOrWhiteSpace((String)_string);
 
 		private Variable(Double value, ValueType type, String name = null)
 		{
 			_numValue = value;
-			_refValue = null;
+			_string = null;
 			_type = type;
 #if DEBUG || LUNY_DEBUG
-			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _refValue, _numValue) : name;
+			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _string, _numValue) : name;
 			if (Double.IsNaN(_numValue))
 				LunyLogger.LogWarning($"Variable {name}: value is 'NaN' (not a number)");
 			if (Double.IsInfinity(_numValue))
@@ -68,10 +68,10 @@ namespace Luny
 		private Variable(Object value, ValueType type, String name = null)
 		{
 			_numValue = 0;
-			_refValue = value;
+			_string = value;
 			_type = type;
 #if DEBUG || LUNY_DEBUG
-			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _refValue, _numValue) : name;
+			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _string, _numValue) : name;
 #endif
 		}
 
@@ -103,55 +103,18 @@ namespace Luny
 				: throw new NotSupportedException($"Unsupported Type: {value.GetType().Name}"),
 		};
 
-		// public static Variable FromVector2(LunyVector2 value) => new(value, ValueType.Vector2);
-		// public static Variable FromVector3(LunyVector3 value) => new(value, ValueType.Vector3);
-		// public static Variable FromQuaternion(LunyQuaternion value) => new(value, ValueType.Quaternion);
-
 		public Boolean AsBoolean() => IsTrue;
 		public Number AsNumber() => _type == ValueType.Number ? _numValue : 0.0;
-		public Double AsDouble() => _type == ValueType.Number ? _numValue : 0.0;
 		public Single AsSingle() => _type == ValueType.Number ? (Single)_numValue : 0f;
-		public Int64 AsInt64() => _type == ValueType.Number ? (Int64)_numValue : 0L;
-
+		public Double AsDouble() => _type == ValueType.Number ? _numValue : 0.0;
 		public Int32 AsInt32() => _type == ValueType.Number ? (Int32)_numValue : 0;
-		// public LunyVector2 AsVector2() => _type == ValueType.Vector2 && _refValue is LunyVector2 v2 ? v2 : default;
-		// public LunyVector3 AsVector3() => _type == ValueType.Vector3 && _refValue is LunyVector3 v3 ? v3 : default;
-
-		/*
-		public LunyQuaternion AsQuaternion()
-		{
-			switch (_type)
-			{
-				case ValueType.Vector2:
-				{
-					var v2 = AsVector2();
-					return LunyQuaternion.Euler(v2.X, 0f, v2.Y);
-				}
-				case ValueType.Vector3:
-				{
-					var v3 = AsVector3();
-					return LunyQuaternion.Euler(v3);
-				}
-				/*
-				case ValueType.Number:
-				{
-					return LunyQuaternion.Euler(LunyVector3.Uniform(AsDouble()));
-				}
-				#1#
-				default:
-					throw new NotSupportedException($"{nameof(AsQuaternion)}: Unsupported input type: {_type}");
-			}
-		}
-		*/
+		public Int64 AsInt64() => _type == ValueType.Number ? (Int64)_numValue : 0L;
 
 		public String AsString() => _type switch
 		{
-			//ValueType.Null => null,
 			ValueType.Number => Convert.ToString(_numValue, CultureInfo.InvariantCulture),
 			ValueType.Boolean => Convert.ToString(AsBoolean()),
-			ValueType.String => _refValue as String ?? _refValue?.ToString() ?? String.Empty,
-			// ValueType.Vector2 => _refValue?.ToString() ?? LunyVector2.Zero.ToString(),
-			// ValueType.Vector3 => _refValue?.ToString() ?? LunyVector3.Zero.ToString(),
+			ValueType.String => _string as String ?? String.Empty,
 			var _ => throw new ArgumentOutOfRangeException(_type.ToString()),
 		};
 
@@ -224,36 +187,10 @@ namespace Luny
 				case ValueType.String:
 					if (t == typeof(String) || t == typeof(Object))
 					{
-						result = (T)_refValue;
+						result = (T)_string;
 						return true;
 					}
 					break;
-
-				// case ValueType.Null:
-				// 	if (t == typeof(Object))
-				// 	{
-				// 		result = default;
-				// 		return true;
-				// 	}
-				// 	break;
-
-				/*
-				case ValueType.Vector2:
-					if (t == typeof(LunyVector2) && _refValue is LunyVector2 v2)
-					{
-						result = Unsafe.As<LunyVector2, T>(ref v2);
-						return true;
-					}
-					break;
-
-				case ValueType.Vector3:
-					if (t == typeof(LunyVector3) && _refValue is LunyVector3 v3)
-					{
-						result = Unsafe.As<LunyVector3, T>(ref v3);
-						return true;
-					}
-					break;
-			*/
 			}
 
 			result = default;
@@ -266,11 +203,7 @@ namespace Luny
 		public static implicit operator Variable(Double v) => new(v, ValueType.Number);
 		public static implicit operator Variable(Boolean v) => new(v ? 1.0 : 0.0, ValueType.Boolean);
 		public static implicit operator Variable(Number v) => new(v, ValueType.Number);
-
 		public static implicit operator Variable(String v) => new(v, ValueType.String);
-		// public static implicit operator Variable(LunyVector2 v) => new(v, ValueType.Vector2);
-		// public static implicit operator Variable(LunyVector3 v) => new(v, ValueType.Vector3);
-		// public static implicit operator Variable(LunyQuaternion v) => new(v, ValueType.Quaternion);
 
 		public static implicit operator Int32(Variable v) => v.AsInt32();
 		public static implicit operator Int64(Variable v) => v.AsInt64();
@@ -285,15 +218,14 @@ namespace Luny
 		{
 			ValueType.Number => $"{_numValue} ({_type})",
 			ValueType.Boolean => $"{IsTrue} ({_type})",
-			ValueType.String => $"{_refValue} ({_type})",
+			ValueType.String => $"{_string} ({_type})",
 			var _ => $"<{_type}>",
 		};
 
 		public Boolean Equals(Boolean b) => _type == ValueType.Boolean && AsBoolean() == b;
 		public Boolean Equals(Double d) => _type == ValueType.Number && _numValue.Equals(d);
-		public Boolean Equals(String s) => _type == ValueType.String && String.Equals((String)_refValue, s);
-
-		public Boolean Equals(Variable other) => _numValue.Equals(other._numValue) && Equals(_refValue, other._refValue);
+		public Boolean Equals(String s) => _type == ValueType.String && String.Equals((String)_string, s);
+		public Boolean Equals(Variable other) => _numValue.Equals(other._numValue) && Equals(_string, other._string);
 
 		public override Boolean Equals(Object obj) => obj switch
 		{
@@ -310,7 +242,7 @@ namespace Luny
 			var _ => false,
 		};
 
-		public override Int32 GetHashCode() => HashCode.Combine(_numValue, _refValue, (Int32)_type);
+		public override Int32 GetHashCode() => HashCode.Combine(_numValue, _string, (Int32)_type);
 
 		public static Boolean operator ==(Variable left, Variable right) => left.Equals(right);
 		public static Boolean operator !=(Variable left, Variable right) => !left.Equals(right);
