@@ -2,9 +2,9 @@
 {
 	public enum LunyCollisionEvent
 	{
-		OnCollisionEntered,
-		OnCollisionExited,
-		OnCollisionUpdate,
+		OnCollisionStarted,
+		OnCollisionEnded,
+		OnCollisionTouching,
 	}
 
 	public enum LunyCollision2DEvent
