@@ -43,13 +43,11 @@ namespace Luny
 	public sealed class Table : ITable
 	{
 		/// <summary>
-		/// Fired when a variable is changed. Only invoked in debug builds.
+		/// Fired when a variable is changed.
 		/// </summary>
 		public event EventHandler<VariableChangedArgs> OnVariableChanged;
 
-#if DEBUG || LUNY_DEBUG
 		private static readonly VariableChangedArgs s_CachedChangedEventArgs = new();
-#endif
 
 		private readonly Dictionary<String, VarHandleBase> _table = new();
 
