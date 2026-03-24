@@ -9,10 +9,9 @@ namespace Luny
 	public sealed class VariableChangedArgs : EventArgs
 	{
 		public String Name { get; internal set; }
-		public Variable Current { get; internal set; }
-		public Variable Previous { get; internal set; }
+		public Table.VarHandleBase Handle { get; internal set; }
 
-		public override String ToString() => $"Variable '{Name}' changed: {Previous} -> {Current}";
+		public override String ToString() => $"Variable changed: {Handle}";
 	}
 
 	/// <summary>
@@ -214,27 +213,13 @@ namespace Luny
 			return sb.ToString();
 		}
 
-		internal void NotifyVariableChanged(String key, Variable currentValue, Variable previousValue)
+		internal void NotifyVariableChanged(VarHandleBase handle)
 		{
 			if (OnVariableChanged == null)
 				return;
 
-			s_CachedChangedEventArgs.Name = key;
-			s_CachedChangedEventArgs.Previous = previousValue;
-			s_CachedChangedEventArgs.Current = currentValue;
-			OnVariableChanged.Invoke(this, s_CachedChangedEventArgs);
-		}
-
-		internal void NotifyVariableChanged<T>(String key, T currentValue, T previousValue)
-		{
-			if (OnVariableChanged == null)
-				return;
-
-			throw new NotImplementedException(nameof(NotifyVariableChanged));
-
-			s_CachedChangedEventArgs.Name = key;
-			//s_CachedChangedEventArgs.Previous = previousValue;
-			//s_CachedChangedEventArgs.Current = currentValue;
+			s_CachedChangedEventArgs.Name = handle.Name;
+			s_CachedChangedEventArgs.Handle = handle;
 			OnVariableChanged.Invoke(this, s_CachedChangedEventArgs);
 		}
 
@@ -279,24 +264,23 @@ namespace Luny
 			public Variable Variable
 			{
 				get => _variable;
-				set
-				{
-					if (_isConstant)
-					{
-						LunyLogger.LogError($"Tried to modify constant variable: '{_name}'", this);
-						return;
-					}
+ 			set
+ 			{
+ 				if (_isConstant)
+ 				{
+ 					LunyLogger.LogError($"Tried to modify constant variable: '{_name}'", this);
+ 					return;
+ 				}
 
-					var previous = _variable;
-					_variable = value;
-					_owner.NotifyVariableChanged(_name, _variable, previous);
-				}
-			}
+ 				_variable = value;
+ 				_owner.NotifyVariableChanged(this);
+ 			}
+ 		}
 
-			internal VarHandle(Table owner, String name, Boolean isConstant = false)
-				: base(owner, name, isConstant) {}
+ 			internal VarHandle(Table owner, String name, Boolean isConstant = false)
+ 				: base(owner, name, isConstant) {}
 
-			internal void SetVariable(Variable value) => _variable = value;
+ 			internal void SetVariable(Variable value) => _variable = value;
 
 			public override void Reset() => _variable = default;
 
@@ -310,24 +294,23 @@ namespace Luny
 			public T Variable
 			{
 				get => _variable;
-				set
-				{
-					if (_isConstant)
-					{
-						LunyLogger.LogError($"Tried to modify constant variable: '{_name}'", this);
-						return;
-					}
+ 			set
+ 			{
+ 				if (_isConstant)
+ 				{
+ 					LunyLogger.LogError($"Tried to modify constant variable: '{_name}'", this);
+ 					return;
+ 				}
 
-					var previous = _variable;
-					_variable = value;
-					_owner.NotifyVariableChanged(_name, _variable, previous);
-				}
-			}
+ 				_variable = value;
+ 				_owner.NotifyVariableChanged(this);
+ 			}
+ 		}
 
-			internal VarHandle(Table owner, String name, Boolean isConstant = false)
-				: base(owner, name, isConstant) {}
+ 			internal VarHandle(Table owner, String name, Boolean isConstant = false)
+ 				: base(owner, name, isConstant) {}
 
-			internal void SetInitialValue(T value) => _variable = value;
+ 			internal void SetInitialValue(T value) => _variable = value;
 
 			public override void Reset() => _variable = default;
 

@@ -12,13 +12,18 @@ namespace Luny
 	{
 		private readonly Dictionary<Type, ILunyEngineObserver> _registeredObservers = new();
 		private readonly List<ILunyEngineObserver> _enabledObservers = new();
+		private ILunyEngineObserver[] _allObservers;
 
 		public IEnumerable<ILunyEngineObserver> EnabledObservers => _enabledObservers;
+		internal ILunyEngineObserver[] AllObservers => _allObservers;
 
 		public LunyEngineObserverRegistry()
 		{
 			LunyTraceLogger.LogInfoInitializing(this);
 			DiscoverAndInstantiateObservers();
+			var values = _registeredObservers.Values;
+			_allObservers = new ILunyEngineObserver[values.Count];
+			values.CopyTo(_allObservers, 0);
 			LunyTraceLogger.LogInfoInitialized(this);
 		}
 
