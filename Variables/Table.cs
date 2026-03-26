@@ -284,7 +284,7 @@ namespace Luny
 
 			public override void Reset() => _variable = default;
 
-			public override String ToString() => $"{_name} = {_variable}";
+			public override String ToString() => $"\"{_name}\": {_variable}";
 		}
 
 		public sealed class VarHandle<T> : VarHandleBase
@@ -314,7 +314,7 @@ namespace Luny
 
 			public override void Reset() => _variable = default;
 
-			public override String ToString() => $"{_name} = {_variable}";
+			public override String ToString() => $"\"{_name}\": {_variable}";
 		}
 	}
 }

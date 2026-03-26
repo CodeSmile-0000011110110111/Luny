@@ -216,9 +216,9 @@ namespace Luny
 		[ExcludeFromCodeCoverage]
 		public override String ToString() => _type switch
 		{
-			ValueType.Number => $"{_numValue} ({_type})",
-			ValueType.Boolean => $"{IsTrue} ({_type})",
-			ValueType.String => $"{_string} ({_type})",
+			ValueType.Number => $"{_numValue}",
+			ValueType.Boolean => $"{IsTrue}",
+			ValueType.String => $"\"{_string}\"",
 			var _ => $"<{_type}>",
 		};
 
