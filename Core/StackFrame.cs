@@ -7,8 +7,8 @@ namespace Luny
 	{
 		public String Name { get; init; }
 		public String Path { get; init; }
-		public String FullPath => System.IO.Path.GetFullPath(Path);
-		public String Filename => System.IO.Path.GetFileName(Path);
+		public String FullPath => !String.IsNullOrEmpty(Path) ? System.IO.Path.GetFullPath(Path) : null;
+		public String FileName => !String.IsNullOrEmpty(Path) ? System.IO.Path.GetFileName(Path) : null;
 		public Int32 Line { get; init; }
 		public Int32 Column { get; init; }
 
