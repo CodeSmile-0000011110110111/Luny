@@ -107,5 +107,9 @@ namespace Luny
 			identifier = identifier.Trim();
 			return identifier.IsValidCSharpIdentifier() ? identifier : identifier.ReplaceIllegalCSharpIdentifierChars();
 		}
+
+		public static String TrimStart(this String text, String prefix) => text.StartsWith(prefix) ? text.Substring(prefix.Length) : text;
+		public static String TrimEnd(this String text, String suffix) =>
+			text.EndsWith(suffix) ? text.Substring(0, text.Length - suffix.Length) : text;
 	}
 }
