@@ -26,15 +26,20 @@ namespace Luny
 		public StackTrace(String name, System.Diagnostics.StackFrame frame)
 			: this(name, frame.GetFileName(), frame.GetFileLineNumber(), frame.GetFileColumnNumber()) {}
 
-		public void Add(StackFrame frame) => _frames.Add(frame);
+		public StackTrace Add(StackFrame frame)
+		{
+			_frames.Add(frame);
+			return this;
+		}
 
-		public void Add([CallerMemberName] String name = "")
+		public StackTrace Add([CallerMemberName] String name = "")
 		{
 			var lastIndex = _frames.Count - 1;
 			Add(new StackFrame(name, _frames[lastIndex].Path, _frames[lastIndex].Line));
+			return this;
 		}
 
-		public void Add([CallerMemberName] String name = "", [CallerFilePath] String path = "", [CallerLineNumber] Int32 line = 0,
+		public StackTrace Add([CallerMemberName] String name = "", [CallerFilePath] String path = "", [CallerLineNumber] Int32 line = 0,
 			Int32 column = 0) => Add(new StackFrame(name, path, line, column));
 
 		public override String ToString()

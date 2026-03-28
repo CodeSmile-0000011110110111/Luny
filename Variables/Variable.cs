@@ -17,7 +17,7 @@ namespace Luny
 			Reference,
 		}
 
-		private const String DefaultName = "(N/A)";
+		private const String DefaultName = null;
 
 #if DEBUG || LUNY_DEBUG
 		private readonly String _name;
@@ -40,7 +40,7 @@ namespace Luny
 		{
 			ValueType.Number => _numValue,
 			ValueType.Boolean => _numValue,
-			var _ => throw new InvalidOperationException($"Attempt to get number value from variable: {this}"),
+			var _ => throw new InvalidOperationException($"Attempt to get number value from {_type}: {this}"),
 		};
 		public Object Object => _type switch
 		{
@@ -76,8 +76,8 @@ namespace Luny
 		}
 
 #if DEBUG || LUNY_DEBUG
-		private static String GenerateUniqueName(ValueType type, Object refValue, Double numValue) =>
-			$"{nameof(Variable)}[{++s_UniqueNameID}] {type} with initial value: {(type == ValueType.Number ? numValue : type == ValueType.Boolean ? numValue != 0.0 : refValue)}";
+		private static String GenerateUniqueName(ValueType type, Object refValue, Double numValue) => null;
+			//$"Literal: {(type == ValueType.Number ? numValue : type == ValueType.Boolean ? Math.Abs(numValue) > Double.Epsilon : refValue)}";
 #endif
 
 		public static Variable Named(Boolean value, String name) => new(value ? 1.0 : 0.0, ValueType.Boolean, name);
