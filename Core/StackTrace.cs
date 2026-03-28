@@ -34,8 +34,8 @@ namespace Luny
 			Add(new StackFrame(name, _frames[lastIndex].Path, _frames[lastIndex].Line));
 		}
 
-		public void Add([CallerMemberName] String name = "", [CallerFilePath] String path = "", [CallerLineNumber] Int32 line = 0) =>
-			Add(new StackFrame(name, path, line));
+		public void Add([CallerMemberName] String name = "", [CallerFilePath] String path = "", [CallerLineNumber] Int32 line = 0,
+			Int32 column = 0) => Add(new StackFrame(name, path, line, column));
 
 		public override String ToString()
 		{
@@ -44,5 +44,8 @@ namespace Luny
 				sb.AppendLine(frame.ToString());
 			return sb.ToString();
 		}
+
+		public void Add(String name, System.Diagnostics.StackFrame frame) =>
+			Add(new StackFrame(name, frame.GetFileName(), frame.GetFileLineNumber(), frame.GetFileColumnNumber()));
 	}
 }
