@@ -77,7 +77,7 @@ namespace Luny
 
 #if DEBUG || LUNY_DEBUG
 		private static String GenerateUniqueName(ValueType type, Object refValue, Double numValue) => null;
-			//$"Literal: {(type == ValueType.Number ? numValue : type == ValueType.Boolean ? Math.Abs(numValue) > Double.Epsilon : refValue)}";
+		//$"Literal: {(type == ValueType.Number ? numValue : type == ValueType.Boolean ? Math.Abs(numValue) > Double.Epsilon : refValue)}";
 #endif
 
 		public static Variable Named(Boolean value, String name) => new(value ? 1.0 : 0.0, ValueType.Boolean, name);
@@ -217,7 +217,7 @@ namespace Luny
 		public override String ToString() => _type switch
 		{
 			ValueType.Number => $"{_numValue}",
-			ValueType.Boolean => $"{IsTrue}",
+			ValueType.Boolean => Emoji.IsTrue(IsTrue),
 			ValueType.String => $"\"{_string}\"",
 			var _ => $"<{_type}>",
 		};
