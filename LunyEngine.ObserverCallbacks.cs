@@ -1,12 +1,24 @@
 ﻿using Luny.Engine.Bridge;
 using System;
+using System.Collections.Generic;
 
 namespace Luny
 {
 	public sealed partial class LunyEngine
 	{
+		private List<ILunyScene> _sceneLoadEventQueue;
+
 		private void OnSceneLoaded(ILunyScene loadedScene) // called by SceneService
 		{
+			if (Time.FrameCount == 0)
+			{
+				LunyLogger.LogWarning($"{nameof(OnSceneLoaded)}() called before engine initialization completed!");
+				if (_sceneLoadEventQueue == null)
+					_sceneLoadEventQueue = new List<ILunyScene>();
+				_sceneLoadEventQueue.Add(loadedScene);
+				return;
+			}
+
 			LunyTraceLogger.LogInfoEventCallback(nameof(OnSceneLoaded), loadedScene?.ToString(), this);
 			InvokeObserversOnSceneLoaded(loadedScene);
 		}

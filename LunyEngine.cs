@@ -173,8 +173,13 @@ namespace Luny
 
 				_serviceRegistry = new LunyServiceRegistry(engine);
 				AssignMandatoryServices();
+
 				_timeInternal = (ILunyTimeServiceInternal)Time;
 				_timeInternal.SetLunyFrameCount(0); // frame "0" marks anything before OnEngineStartup()
+
+				var sceneService = (ILunySceneServiceInternal)Scene;
+				sceneService.OnSceneLoaded += OnSceneLoaded;
+				sceneService.OnSceneUnloaded += OnSceneUnloaded;
 
 				_profiler = new LunyEngineProfiler(Time);
 				_observerRegistry = new LunyEngineObserverRegistry();

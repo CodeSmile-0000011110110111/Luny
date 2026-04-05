@@ -35,12 +35,16 @@ namespace Luny
 				}
 			}
 
-			// Services Startup
-			var sceneService = (ILunySceneServiceInternal)Scene;
-			sceneService.OnSceneLoaded += OnSceneLoaded;
-			sceneService.OnSceneUnloaded += OnSceneUnloaded;
-
 			_serviceRegistry.Startup();
+
+			// process any "too early" scene events
+			if (_sceneLoadEventQueue != null)
+			{
+				foreach (var lunyScene in _sceneLoadEventQueue)
+					OnSceneLoaded(lunyScene);
+
+				_sceneLoadEventQueue = null;
+			}
 
 			LunyTraceLogger.LogInfoStartupComplete(this);
 			_timeInternal.SetLunyFrameCount(0); // Reset back to 0 since we increment it when processing the first frame
