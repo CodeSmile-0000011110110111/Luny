@@ -4,6 +4,7 @@ namespace Luny
 {
 	public static class Emoji
 	{
+		#pragma warning disable 0414 // assigned but its value is never used
 		private static readonly String True = "✅";
 		private static readonly String False = "❌";
 
@@ -23,6 +24,7 @@ namespace Luny
 		private static readonly String NotFound = "🤷";
 
 		private static readonly String Searching = "🔍";
+		#pragma warning restore 0414
 
 		public static String IsTrue(Boolean value) => value ? True : False;
 		public static String IsSatisfied(Boolean value) => value ? Satisfied : Unsatisfied;
