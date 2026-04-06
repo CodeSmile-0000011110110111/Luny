@@ -117,36 +117,37 @@ namespace Luny.Engine.Bridge
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Set(Single newX, Single newY, Single newZ) => _value = new Vector3(newX, newY, newZ);
+		public void Set(Double newX, Double newY, Double newZ) => _value = new Vector3((Single)newX, (Single)newY, (Single)newZ);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Scale(LunyVector3 scale) => _value *= scale._value;
 
 		// Static methods
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Single Dot(LunyVector3 lhs, LunyVector3 rhs) => Vector3.Dot(lhs._value, rhs._value);
+		public static Double Dot(LunyVector3 lhs, LunyVector3 rhs) => Vector3.Dot(lhs._value, rhs._value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static LunyVector3 Cross(LunyVector3 lhs, LunyVector3 rhs) => new(Vector3.Cross(lhs._value, rhs._value));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Single Distance(LunyVector3 a, LunyVector3 b) => Vector3.Distance(a._value, b._value);
+		public static Double Distance(LunyVector3 a, LunyVector3 b) => Vector3.Distance(a._value, b._value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Single SqrDistance(LunyVector3 a, LunyVector3 b) => Vector3.DistanceSquared(a._value, b._value);
+		public static Double SqrDistance(LunyVector3 a, LunyVector3 b) => Vector3.DistanceSquared(a._value, b._value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyVector3 Lerp(LunyVector3 a, LunyVector3 b, Single t) => new(Vector3.Lerp(a._value, b._value, Math.Clamp(t, 0f, 1f)));
+		public static LunyVector3 Lerp(LunyVector3 a, LunyVector3 b, Double t) =>
+			new(Vector3.Lerp(a._value, b._value, Math.Clamp((Single)t, 0f, 1f)));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyVector3 LerpUnclamped(LunyVector3 a, LunyVector3 b, Single t) => new(Vector3.Lerp(a._value, b._value, t));
+		public static LunyVector3 LerpUnclamped(LunyVector3 a, LunyVector3 b, Double t) => new(Vector3.Lerp(a._value, b._value, (Single)t));
 
-		public static LunyVector3 Slerp(LunyVector3 a, LunyVector3 b, Single t)
+		public static LunyVector3 Slerp(LunyVector3 a, LunyVector3 b, Double t)
 		{
 			t = Math.Clamp(t, 0f, 1f);
-			var dot = Math.Clamp(Vector3.Dot(Vector3.Normalize(a._value), Vector3.Normalize(b._value)), -1f, 1f);
-			var theta = MathF.Acos(dot) * t;
-			var relativeVec = Vector3.Normalize(b._value - a._value * dot);
+			var dot = Math.Clamp(Vector3.Dot(Vector3.Normalize(a._value), Vector3.Normalize(b._value)), -1d, 1d);
+			var theta = (Single)(Math.Acos(dot) * t);
+			var relativeVec = Vector3.Normalize(b._value - a._value * (Single)dot);
 			return new LunyVector3(a._value * MathF.Cos(theta) + relativeVec * MathF.Sin(theta));
 		}
 
@@ -223,7 +224,7 @@ namespace Luny.Engine.Bridge
 		{
 			var unsignedAngle = Angle(from, to);
 			var cross = Cross(from, to);
-			var sign = MathF.Sign(Dot(axis, cross));
+			var sign = Math.Sign(Dot(axis, cross));
 			return unsignedAngle * (sign < 0 ? -1f : 1f);
 		}
 

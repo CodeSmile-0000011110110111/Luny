@@ -100,10 +100,13 @@ namespace Luny.Engine.Services
 		public abstract Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
 		public abstract void EnableInputAction(String actionName, Boolean enable);
 
+		[Obsolete]
 		protected void SetDirectionalInput(String actionName, LunyVector2 value) => _directionVectors[actionName] = value;
 
+		[Obsolete]
 		protected void SetAxisInput(String actionName, Single value) => _axisValues[actionName] = value;
 
+		[Obsolete]
 		protected void SetButtonInput(String actionName, Boolean pressed, Single strength = 1f) {}
 
 		protected LunyInputActionEvent GetOrCreateInputActionEvent(String actionName)
