@@ -70,6 +70,12 @@ namespace Luny.Engine.Bridge
 		public LunyVector3(Double x, Double y) => _value = new Vector3((Single)x, (Single)y, 0f);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public LunyVector3(Single x) => _value = new Vector3(x, 0f, 0f);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public LunyVector3(Double x) => _value = new Vector3((Single)x, 0f, 0f);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal LunyVector3(Vector3 value) => _value = value;
 
 		// Static properties

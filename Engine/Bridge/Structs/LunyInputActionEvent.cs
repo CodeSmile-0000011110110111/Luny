@@ -9,6 +9,7 @@ namespace Luny.Engine.Bridge
 		public String UserName;
 		public Int32 DeviceId;
 		public LunyInputActionPhase Phase;
+		public LunyVector3 Value;
 
 		public override String ToString() => $"Input({UserName}, {ActionMapName}/{ActionName}, {Phase})";
 	}
