@@ -56,6 +56,7 @@ namespace Luny.Engine.Bridge
 		public abstract void Translate(LunyVector2 translation, LunyTransformSpace space = LunyTransformSpace.Self);
 		public abstract void Translate(LunyVector3 translation, LunyTransformSpace space = LunyTransformSpace.Self);
 
-		public T As<T>() => (T)NativeTransform;
+		public T Cast<T>() => (T)NativeTransform;
+		public T As<T>() where T : class => NativeTransform as T;
 	}
 }

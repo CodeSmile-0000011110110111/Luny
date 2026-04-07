@@ -186,8 +186,8 @@ namespace Luny.Engine.Bridge
 			return result;
 		}
 
-		public static LunyQuaternion AngleAxis(Single angle, LunyVector3 axis) => new(Quaternion.CreateFromAxisAngle(
-			new Vector3(axis.X, axis.Y, axis.Z), angle * (MathF.PI / 180f)));
+		public static LunyQuaternion AngleAxis(Double angle, LunyVector3 axis) => new(Quaternion.CreateFromAxisAngle(
+			new Vector3(axis.X, axis.Y, axis.Z), (Single)(angle * (Math.PI / 180d))));
 
 		public static LunyQuaternion LookRotation(LunyVector3 forward, LunyVector3 upwards)
 		{

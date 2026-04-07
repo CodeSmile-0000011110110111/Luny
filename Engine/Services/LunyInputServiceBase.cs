@@ -61,7 +61,8 @@ namespace Luny.Engine.Services
 		void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyObject lunyObject);
 		void UnassignUser(String userName);
 		Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
-		void EnableInputAction(String actionName, Boolean enable);
+		void EnableInputAction(String actionName);
+		void DisableInputAction(String actionName);
 	}
 
 	public abstract class LunyInputServiceBase : LunyEngineServiceBase, ILunyInputService
@@ -98,7 +99,8 @@ namespace Luny.Engine.Services
 		public abstract void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyObject lunyObject);
 		public abstract void UnassignUser(String userName);
 		public abstract Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
-		public abstract void EnableInputAction(String actionName, Boolean enable);
+		public abstract void EnableInputAction(String actionName);
+		public abstract void DisableInputAction(String actionName);
 
 		[Obsolete]
 		protected void SetDirectionalInput(String actionName, LunyVector2 value) => _directionVectors[actionName] = value;
