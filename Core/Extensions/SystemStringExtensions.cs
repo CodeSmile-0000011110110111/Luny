@@ -38,6 +38,7 @@ namespace Luny
 		/// </summary>
 		/// <param name="str"></param>
 		/// <param name="allowNamespaces">Allows '.' as character as well</param>
+		/// <param name="allowGenerics"></param>
 		/// <returns></returns>
 		public static Boolean IsValidCSharpIdentifier(this String str, Boolean allowNamespaces = false,
 			Boolean allowGenerics = false)
@@ -97,7 +98,6 @@ namespace Luny
 		///     Trims string and replaces illegal C# identifier characters and prints a Debug.LogWarning if it had to be altered.
 		/// </summary>
 		/// <param name="identifier"></param>
-		/// <param name="noWarnings"></param>
 		/// <returns></returns>
 		public static String SanitizeIdentifier(this String identifier)
 		{

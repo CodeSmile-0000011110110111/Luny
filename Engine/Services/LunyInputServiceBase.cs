@@ -55,7 +55,7 @@ namespace Luny.Engine.Services
 		/// <summary>
 		/// Activate a given control scheme eg `Gamepad` or <![CDATA[`Keyboard&Mouse`]]> to prevent other device input from coming through.
 		/// </summary>
-		/// <param name="schemeName"></param>
+		/// <param name="schemeNames"></param>
 		void SetControlSchemes(params String[] schemeNames);
 
 		void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyObject lunyObject);
