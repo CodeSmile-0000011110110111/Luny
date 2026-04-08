@@ -12,6 +12,6 @@ namespace Luny.Engine.Bridge
 		/// <summary>
 		/// Operates in local space (relative to the object itself).
 		/// </summary>
-		Self,
+		Local,
 	}
 }
