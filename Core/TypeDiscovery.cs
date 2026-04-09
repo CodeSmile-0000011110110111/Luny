@@ -14,11 +14,16 @@ namespace Luny
 		/// <summary>
 		/// Discovers all concrete (non-abstract, non-interface) types assignable to T.
 		/// </summary>
-		public static IEnumerable<Type> FindAll<T>() => AppDomain.CurrentDomain.GetAssemblies()
-			.SelectMany(GetTypesFromAssembly)
-			.Where(t => typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
-			.GroupBy(t => t.AssemblyQualifiedName)
-			.Select(t => t.First()); // excludes shadow copied Assemblies during NUnit test runs
+		public static IEnumerable<Type> FindAll<T>()
+		{
+			var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+			var containsSmokeTests = allAssemblies.FirstOrDefault((assembly => assembly.FullName.Contains("SmokeTests")));
+			var allTypes = allAssemblies.SelectMany(GetTypesFromAssembly);
+			var validImplementations = allTypes.Where(t => typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
+			var groupedByType = validImplementations.GroupBy(t => t.AssemblyQualifiedName);
+			var uniqueTypes = groupedByType.Select(g => g.First()); // excludes shadow copied Assemblies during NUnit test runs
+			return uniqueTypes;
+		}
 
 		/// <summary>
 		/// Safe wrapper for Assembly.GetTypes() with consistent error handling.

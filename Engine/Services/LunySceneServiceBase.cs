@@ -26,6 +26,7 @@ namespace Luny.Engine.Services
 		/// Finds a LunyObject by name in the current scene.
 		/// </summary>
 		ILunyObject FindObjectByName(String name);
+
 		/// <summary>
 		/// Finds a named child object under <paramref name="parent"/> (depth-first, includes inactive).
 		/// Returns null if not found.

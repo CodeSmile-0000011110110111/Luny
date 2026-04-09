@@ -95,7 +95,7 @@ namespace Luny
 		}
 
 		/// <summary>
-		///     Trims string and replaces illegal C# identifier characters and prints a Debug.LogWarning if it had to be altered.
+		///     Trims string and replaces illegal C# identifier characters.
 		/// </summary>
 		/// <param name="identifier"></param>
 		/// <returns></returns>
@@ -109,6 +109,7 @@ namespace Luny
 		}
 
 		public static String TrimStart(this String text, String prefix) => text.StartsWith(prefix) ? text.Substring(prefix.Length) : text;
+
 		public static String TrimEnd(this String text, String suffix) =>
 			text.EndsWith(suffix) ? text.Substring(0, text.Length - suffix.Length) : text;
 	}

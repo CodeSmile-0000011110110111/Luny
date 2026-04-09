@@ -77,6 +77,7 @@ namespace Luny.Engine.Bridge
 				throw new ArgumentNullException(nameof(parent));
 			if (String.IsNullOrEmpty(childName))
 				throw new ArgumentException("Child name cannot be null or empty.", nameof(childName));
+
 			_parent = new WeakReference<ILunyObject>(parent);
 			_childName = childName;
 			_cachedChild = new WeakReference<ILunyObject>(null);
@@ -91,6 +92,7 @@ namespace Luny.Engine.Bridge
 				return cached;
 			if (!_parent.TryGetTarget(out var parent) || parent == null || !parent.IsValid)
 				return null;
+
 			var child = LunyEngine.Instance.Scene.FindChildByName(parent, _childName);
 			_cachedChild = new WeakReference<ILunyObject>(child);
 			return child;

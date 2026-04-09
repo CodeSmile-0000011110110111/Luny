@@ -12,6 +12,7 @@ namespace Luny.Engine.Bridge
 
 		/// <summary>Sets whether the rigidbody is kinematic (not affected by physics forces).</summary>
 		void SetKinematic(Boolean enabled);
+
 		/// <summary>Sets whether gravity affects this rigidbody.</summary>
 		void SetGravityEnabled(Boolean enabled);
 
@@ -20,6 +21,7 @@ namespace Luny.Engine.Bridge
 		/// Local space by default; pass <see cref="LunyTransformSpace.World"/> for world space.
 		/// </summary>
 		void MovePosition(LunyVector3 delta, LunyTransformSpace space);
+
 		/// <summary>
 		/// Rotates the rigidbody by <paramref name="eulerDelta"/> degrees this physics step.
 		/// Local space by default; pass <see cref="LunyTransformSpace.World"/> for world space.
@@ -31,11 +33,13 @@ namespace Luny.Engine.Bridge
 		/// Local space by default; pass <see cref="LunyTransformSpace.World"/> for world space.
 		/// </summary>
 		void AddForce(LunyVector3 force, LunyForceMode forceMode, LunyTransformSpace space);
+
 		/// <summary>
 		/// Applies a linear force or impulse at a specific world-space position, generating torque.
 		/// The caller is responsible for converting any local offset to world space before calling.
 		/// </summary>
 		void AddForceAtPosition(LunyVector3 force, LunyVector3 worldPosition, LunyForceMode forceMode);
+
 		/// <summary>
 		/// Applies an angular force (torque) or angular impulse to the rigidbody.
 		/// Local space by default; pass <see cref="LunyTransformSpace.World"/> for world space.
@@ -61,16 +65,22 @@ namespace Luny.Engine.Bridge
 
 		/// <inheritdoc/>
 		public abstract void SetKinematic(Boolean enabled);
+
 		/// <inheritdoc/>
 		public abstract void SetGravityEnabled(Boolean enabled);
+
 		/// <inheritdoc/>
 		public abstract void MovePosition(LunyVector3 delta, LunyTransformSpace space);
+
 		/// <inheritdoc/>
 		public abstract void MoveRotation(LunyVector3 eulerDelta, LunyTransformSpace space);
+
 		/// <inheritdoc/>
 		public abstract void AddForce(LunyVector3 force, LunyForceMode forceMode, LunyTransformSpace space);
+
 		/// <inheritdoc/>
 		public abstract void AddForceAtPosition(LunyVector3 force, LunyVector3 worldPosition, LunyForceMode forceMode);
+
 		/// <inheritdoc/>
 		public abstract void AddTorque(LunyVector3 torque, LunyForceMode forceMode, LunyTransformSpace space);
 	}

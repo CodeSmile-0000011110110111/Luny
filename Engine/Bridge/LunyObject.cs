@@ -165,6 +165,7 @@ namespace Luny.Engine.Bridge
 		/// </summary>
 		/// <returns></returns>
 		ILunyObject Clone();
+
 		/// <summary>
 		/// Creates a new instance of the current object and parents it.
 		/// </summary>

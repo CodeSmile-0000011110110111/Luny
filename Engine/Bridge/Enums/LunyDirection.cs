@@ -9,6 +9,7 @@
 		Up,
 		Down,
 	}
+
 	public enum LunyCardinalDirection
 	{
 		// Horizontal Plane (3D Forward/Back)
