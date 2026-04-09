@@ -14,7 +14,7 @@ namespace Luny.Engine.Bridge
 			{
 				if (!_cachedObject.TryGetTarget(out var obj) || !IsValid(obj))
 				{
-					obj = ResolveObject(_query);
+					obj = ResolveSceneObject(_query);
 					//LunyLogger.LogInfo($"'{_query}' resolved to {obj}", this);
 					_cachedObject.SetTarget(obj);
 				}
@@ -40,7 +40,7 @@ namespace Luny.Engine.Bridge
 			_cachedObject = new WeakReference<T>(obj);
 		}
 
-		protected abstract T ResolveObject([NotNull] String query);
+		protected abstract T ResolveSceneObject([NotNull] String query);
 		protected abstract Boolean IsValid(T value);
 	}
 
@@ -56,7 +56,7 @@ namespace Luny.Engine.Bridge
 		public LunyObjectRef(ILunyObject obj)
 			: base((LunyObject)obj) {}
 
-		protected override LunyObject ResolveObject(String query) => (LunyObject)LunyEngine.Instance.Scene.FindObjectByName(query);
+		protected override LunyObject ResolveSceneObject(String query) => (LunyObject)LunyEngine.Instance.Scene.FindObjectByName(query);
 		protected override Boolean IsValid(LunyObject value) => value != null && value.IsValid;
 	}
 
@@ -71,7 +71,7 @@ namespace Luny.Engine.Bridge
 		public LunyAssetRef(ILunyAsset asset)
 			: base((LunyAsset)asset) {}
 
-		protected override LunyAsset ResolveObject(String query) => throw new NotImplementedException(nameof(ResolveObject));
+		protected override LunyAsset ResolveSceneObject(String query) => throw new NotImplementedException(nameof(ResolveSceneObject));
 		protected override Boolean IsValid(LunyAsset value) => value != null;
 	}
 }
