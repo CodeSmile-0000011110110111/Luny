@@ -26,7 +26,7 @@ namespace Luny.Engine.Bridge
 		public override Boolean Equals(Object obj) => obj is LunyObjectId other && Equals(other);
 		public override Int32 GetHashCode() => Value;
 		public Int32 CompareTo(LunyObjectId other) => Value.CompareTo(other.Value);
-		public override String ToString() => $"ObjectId:{Value}";
+		public override String ToString() => $"Id:{Value}";
 
 		public static Boolean operator ==(LunyObjectId left, LunyObjectId right) => left.Equals(right);
 		public static Boolean operator !=(LunyObjectId left, LunyObjectId right) => !left.Equals(right);

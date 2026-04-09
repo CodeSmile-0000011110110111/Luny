@@ -285,9 +285,9 @@ namespace Luny.Engine.Bridge
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override Int32 GetHashCode() => _value.GetHashCode();
 
-		public override String ToString() => $"({X:0.###}, {Y:0.###}, {Z:0.###})";
+		public override String ToString() => $"({X:0.##},{Y:0.##},{Z:0.##})";
 
-		public String ToString(String format) => $"({X.ToString(format)}, {Y.ToString(format)}, {Z.ToString(format)})";
+		public String ToString(String format) => $"({X.ToString(format)},{Y.ToString(format)},{Z.ToString(format)})";
 
 		// Internal accessor for engine bridge extensions
 		internal Vector3 InternalValue

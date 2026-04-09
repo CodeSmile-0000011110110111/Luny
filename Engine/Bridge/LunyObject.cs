@@ -231,7 +231,7 @@ namespace Luny.Engine.Bridge
 
 		public String Name
 		{
-			get => IsValid ? GetNativeObjectName() : $"<null:{DebugNativeObjectName}({_nativeObjectId})>";
+			get => IsValid ? GetNativeObjectName() : $"{Emoji.Destroyed}{_nativeObjectId}: \"{DebugNativeObjectName}\"";
 			set
 			{
 				if (IsValid)
@@ -431,7 +431,7 @@ namespace Luny.Engine.Bridge
 		protected abstract void SetNativeObjectVisible();
 		protected abstract void SetNativeObjectInvisible();
 
-		public override String ToString() => $"{(IsEnabled ? "☑" : "☐")} {Name} ({LunyObjectId}, {NativeObjectId})";
+		public override String ToString() => IsValid ? $"{Emoji.IsEnabled(IsEnabled)}\"{Name}\" ({LunyObjectId}, {NativeObjectId})" : Name;
 
 		[Conditional("DEBUG")] [Conditional("LUNY_DEBUG")]
 		private void ThrowIfInitializedAgain()

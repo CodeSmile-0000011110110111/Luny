@@ -10,26 +10,57 @@ namespace Luny
 		public static String IsAgreed(Boolean value) => value ? Agreed : Disagreed;
 		public static String IsApproved(Boolean value) => value ? Approved : Disapproved;
 		public static String IsFound(Boolean value) => value ? Found : NotFound;
+		public static String IsEnabled(Boolean value) => value ? Enabled : Disabled;
+
 #pragma warning disable 0414 // assigned but its value is never used
-		private static readonly String True = "✅";
-		private static readonly String False = "❌";
+		public static readonly String True = "✅";
+		public static readonly String False = "❌";
 
-		private static readonly String Satisfied = "🟢";
-		private static readonly String Unsatisfied = "🔴";
+		public static readonly String Satisfied = "🟢";
+		public static readonly String Unsatisfied = "🔴";
 
-		private static readonly String Known = "💡";
-		private static readonly String Unknown = "🤔";
+		public static readonly String Day = "☀️";
+		public static readonly String Night = "🌑";
 
-		private static readonly String Agreed = "👍";
-		private static readonly String Disagreed = "👎";
+		public static readonly String On = "🔌";
+		public static readonly String Off = "🚫";
 
-		private static readonly String Approved = "🤝";
-		private static readonly String Disapproved = "🙅";
+		public static readonly String Active = "⚔️";
+		public static readonly String Passive = "🛡️";
 
-		private static readonly String Found = "🎯";
-		private static readonly String NotFound = "🤷";
+		public static readonly String Enabled = "⚡";
+		public static readonly String Disabled = "💤";
 
-		private static readonly String Searching = "🔍";
+		public static readonly String Full = "🔋";
+		public static readonly String Empty = "🪫";
+
+		public static readonly String Known = "💡";
+		public static readonly String Unknown = "🤔";
+
+		public static readonly String Agreed = "👍";
+		public static readonly String Disagreed = "👎";
+
+		public static readonly String Approved = "🤝";
+		public static readonly String Disapproved = "🙅";
+
+		public static readonly String Found = "🎯";
+		public static readonly String NotFound = "🤷";
+
+		public static readonly String Searching = "🔍";
+
+		public static readonly String Position = "📍";
+		public static readonly String Rotation = "🌀"; //⟳🔄
+		public static readonly String Scale = "📐";
+
+		public static readonly String Folder = "📂";
+		public static readonly String Dependency = "🔗";
+
+		public static readonly String Parent = "🐔";
+		public static readonly String Child = "🐣";
+
+		public static readonly String NullReference = "✖️"; //🕳️
+		public static readonly String Destroyed = "💀";
+
 #pragma warning restore 0414
 	}
 }

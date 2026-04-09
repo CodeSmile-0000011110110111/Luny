@@ -42,6 +42,10 @@ namespace Luny.Engine.Bridge
 
 		protected abstract T ResolveSceneObject([NotNull] String query);
 		protected abstract Boolean IsValid(T value);
+
+		public override String ToString() => _cachedObject != null && _cachedObject.TryGetTarget(out var target)
+			? target.ToString()
+			: $"{GetType().Name}(\"{_query}\")";
 	}
 
 	public sealed class LunyObjectRef : LunyRef<LunyObject>
