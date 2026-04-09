@@ -102,6 +102,10 @@ namespace Luny.Engine.Bridge
 		/// </summary>
 		LunyTransform Transform { get; }
 		/// <summary>
+		/// The <see cref="LunyRigidbody"/> of this object. Returns null if no rigidbody component exists.
+		/// </summary>
+		ILunyRigidbody Rigidbody { get; }
+		/// <summary>
 		/// The name of the object in the scene hierarchy.
 		/// </summary>
 		/// <remarks>To aid debugging, this property remains valid even after the object has been destroyed.</remarks>
@@ -196,7 +200,6 @@ namespace Luny.Engine.Bridge
 		private readonly LunyObjectId _lunyObjectId;
 		private readonly LunyNativeObjectId _nativeObjectId;
 		private SystemObject _nativeObject;
-		private LunyTransform _transform;
 		private ObjectState _state;
 
 		[NotNull] private static ILunyObjectLifecycleInternal Lifecycle => ((ILunyEngineInternal)LunyEngine.Instance).ObjectLifecycle;
@@ -205,7 +208,19 @@ namespace Luny.Engine.Bridge
 		public LunyObjectId LunyObjectId => _lunyObjectId;
 		public LunyNativeObjectId NativeObjectId => _nativeObjectId;
 		public SystemObject NativeObject => _nativeObject;
-		public LunyTransform Transform => _transform ??= IsValid ? GetNativeTransform() : null;
+		/// <remarks>
+		/// Caching is handled inside <see cref="GetNativeTransform"/> (engine-specific subclass).
+		/// The subclass must null the cache when the native object is destroyed to allow GC.
+		/// TODO: refactor to GetNativeComponent&lt;T&gt;() once LunyComponent base class exists.
+		/// </remarks>
+		public LunyTransform Transform => IsValid ? GetNativeTransform() : null;
+		/// <remarks>
+		/// Caching is handled inside <see cref="GetNativeRigidbody"/> (engine-specific subclass).
+		/// Returns null if the native object has no rigidbody component or has been destroyed.
+		/// TODO: refactor to GetNativeComponent&lt;T&gt;() once LunyComponent base class exists.
+		/// </remarks>
+		public LunyRigidbody Rigidbody => IsValid ? GetNativeRigidbody() : null;
+		ILunyRigidbody ILunyObject.Rigidbody => Rigidbody;
 
 #if DEBUG || LUNY_DEBUG
 		private String DebugNativeObjectName { get; set; }
@@ -403,6 +418,7 @@ namespace Luny.Engine.Bridge
 		}
 
 		protected abstract LunyTransform GetNativeTransform();
+		protected abstract LunyRigidbody GetNativeRigidbody();
 		protected abstract void DestroyNativeObject();
 		protected abstract Boolean IsNativeObjectReferenceValid();
 		protected abstract String GetNativeObjectName();

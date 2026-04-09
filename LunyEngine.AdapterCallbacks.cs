@@ -7,6 +7,7 @@ namespace Luny
 	public sealed partial class LunyEngine
 	{
 		private Boolean _didCallPreUpdateThisFrame;
+		private Boolean _engineStartupCompleted;
 
 		void ILunyEngineLifecycle.EngineStartup(ILunyEngineNativeAdapter nativeAdapter)
 		{
@@ -36,6 +37,7 @@ namespace Luny
 			}
 
 			_serviceRegistry.Startup();
+			_engineStartupCompleted = true;
 
 			// process any "too early" scene events
 			if (_sceneLoadEventQueue != null)

@@ -26,6 +26,11 @@ namespace Luny.Engine.Services
 		/// Finds a LunyObject by name in the current scene.
 		/// </summary>
 		ILunyObject FindObjectByName(String name);
+		/// <summary>
+		/// Finds a named child object under <paramref name="parent"/> (depth-first, includes inactive).
+		/// Returns null if not found.
+		/// </summary>
+		ILunyObject FindChildByName(ILunyObject parent, String name);
 	}
 
 	internal interface ILunySceneServiceInternal
@@ -43,6 +48,7 @@ namespace Luny.Engine.Services
 		public abstract void ReloadScene();
 		public abstract IReadOnlyList<ILunyObject> GetObjects(IReadOnlyCollection<String> objectNames);
 		public abstract ILunyObject FindObjectByName(String name);
+		public abstract ILunyObject FindChildByName(ILunyObject parent, String name);
 
 		protected void InvokeOnSceneLoaded(ILunyScene scene) => OnSceneLoaded?.Invoke(scene);
 		protected void InvokeOnSceneUnloaded(ILunyScene scene) => OnSceneUnloaded?.Invoke(scene);

@@ -10,9 +10,8 @@ namespace Luny
 
 		private void OnSceneLoaded(ILunyScene loadedScene) // called by SceneService
 		{
-			if (Time.FrameCount == 0)
+			if (!_engineStartupCompleted)
 			{
-				LunyLogger.LogWarning($"{nameof(OnSceneLoaded)}() called before engine initialization completed!");
 				if (_sceneLoadEventQueue == null)
 					_sceneLoadEventQueue = new List<ILunyScene>();
 				_sceneLoadEventQueue.Add(loadedScene);

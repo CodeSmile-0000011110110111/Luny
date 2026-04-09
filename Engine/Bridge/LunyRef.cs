@@ -60,6 +60,43 @@ namespace Luny.Engine.Bridge
 		protected override Boolean IsValid(LunyObject value) => value != null && value.IsValid;
 	}
 
+	/// <summary>
+	/// Resolves a named child object under a specific parent <see cref="ILunyObject"/> at runtime.
+	/// Caches the resolved child as a weak reference to avoid preventing GC.
+	/// Blocks should attempt resolution in their ctor and re-resolve in Execute if the cached ref is no longer valid.
+	/// </summary>
+	public sealed class LunyChildRef
+	{
+		private readonly WeakReference<ILunyObject> _parent;
+		private readonly String _childName;
+		private WeakReference<ILunyObject> _cachedChild;
+
+		public LunyChildRef(ILunyObject parent, String childName)
+		{
+			if (parent == null)
+				throw new ArgumentNullException(nameof(parent));
+			if (String.IsNullOrEmpty(childName))
+				throw new ArgumentException("Child name cannot be null or empty.", nameof(childName));
+			_parent = new WeakReference<ILunyObject>(parent);
+			_childName = childName;
+			_cachedChild = new WeakReference<ILunyObject>(null);
+		}
+
+		/// <summary>
+		/// Resolves the child object by name under the parent. Returns null if not found or parent is destroyed.
+		/// </summary>
+		public ILunyObject Resolve()
+		{
+			if (_cachedChild.TryGetTarget(out var cached) && cached != null && cached.IsValid)
+				return cached;
+			if (!_parent.TryGetTarget(out var parent) || parent == null || !parent.IsValid)
+				return null;
+			var child = LunyEngine.Instance.Scene.FindChildByName(parent, _childName);
+			_cachedChild = new WeakReference<ILunyObject>(child);
+			return child;
+		}
+	}
+
 	public sealed class LunyAssetRef : LunyRef<LunyAsset>
 	{
 		public static implicit operator LunyAssetRef(String name) => new(name);
