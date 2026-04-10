@@ -61,6 +61,11 @@ namespace Luny
 		public static readonly String NullReference = "✖️"; //🕳️
 		public static readonly String Destroyed = "💀";
 
+		public static readonly String Negation = "❕";
+		public static readonly String LogicalAnd = " AND ";
+		public static readonly String LogicalOr = " OR ";
+
+
 #pragma warning restore 0414
 	}
 }
