@@ -65,6 +65,15 @@ namespace Luny
 		public static readonly String LogicalAnd = " <color=\"grey\"><b>AND</b></color> ";
 		public static readonly String LogicalOr = " <color=\"grey\"><b>OR</b></color> ";
 
+		public static readonly String Equality = "🟰";
+		public static readonly String Inequality = "<size=125%><b><color=\"#9090c0\">!=</color></b></size>";
+
+		public static readonly String Multiply = "✖️";
+		public static readonly String Divide = "➗";
+		public static readonly String Plus = "➕";
+		public static readonly String Minus = "➖";
+
+
 
 #pragma warning restore 0414
 	}

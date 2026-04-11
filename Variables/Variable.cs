@@ -216,7 +216,7 @@ namespace Luny
 		[ExcludeFromCodeCoverage]
 		public override String ToString() => _type switch
 		{
-			ValueType.Number => $"{_numValue}",
+			ValueType.Number => _numValue.ToString("#,##0.###"),
 			ValueType.Boolean => Emoji.IsTrue(IsTrue),
 			ValueType.String => $"\"{_string}\"",
 			var _ => $"<{_type}>",
