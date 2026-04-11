@@ -62,8 +62,8 @@ namespace Luny
 		public static readonly String Destroyed = "💀";
 
 		public static readonly String Negation = "❕";
-		public static readonly String LogicalAnd = " AND ";
-		public static readonly String LogicalOr = " OR ";
+		public static readonly String LogicalAnd = " <color=\"grey\"><b>AND</b></color> ";
+		public static readonly String LogicalOr = " <color=\"grey\"><b>OR</b></color> ";
 
 
 #pragma warning restore 0414

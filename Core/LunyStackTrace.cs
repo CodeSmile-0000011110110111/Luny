@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Luny
 {
-	public class LunyStackTrace
+	public sealed class LunyStackTrace
 	{
 		private readonly List<StackFrame> _frames;
 		public IReadOnlyList<StackFrame> Frames => _frames.AsReadOnly();
