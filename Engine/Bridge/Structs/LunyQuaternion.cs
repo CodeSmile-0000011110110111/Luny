@@ -137,26 +137,28 @@ namespace Luny.Engine.Bridge
 		public void Normalize() => _value = Quaternion.Normalize(_value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Set(Single newX, Single newY, Single newZ, Single newW) => _value = new Quaternion(newX, newY, newZ, newW);
+		public void Set(Double newX, Double newY, Double newZ, Double newW) =>
+			_value = new Quaternion((Single)newX, (Single)newY, (Single)newZ, (Single)newW);
 
 		// Static methods
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Single Dot(LunyQuaternion a, LunyQuaternion b) => Quaternion.Dot(a._value, b._value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyQuaternion Slerp(LunyQuaternion a, LunyQuaternion b, Single t) =>
-			new(Quaternion.Slerp(a._value, b._value, Math.Clamp(t, 0f, 1f)));
+		public static LunyQuaternion Slerp(LunyQuaternion a, LunyQuaternion b, Double t) =>
+			new(Quaternion.Slerp(a._value, b._value, (Single)Math.Clamp(t, 0d, 1d)));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyQuaternion SlerpUnclamped(LunyQuaternion a, LunyQuaternion b, Single t) =>
-			new(Quaternion.Slerp(a._value, b._value, t));
+		public static LunyQuaternion SlerpUnclamped(LunyQuaternion a, LunyQuaternion b, Double t) =>
+			new(Quaternion.Slerp(a._value, b._value, (float)t));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyQuaternion Lerp(LunyQuaternion a, LunyQuaternion b, Single t) =>
-			new(Quaternion.Lerp(a._value, b._value, Math.Clamp(t, 0f, 1f)));
+		public static LunyQuaternion Lerp(LunyQuaternion a, LunyQuaternion b, Double t) =>
+			new(Quaternion.Lerp(a._value, b._value, (Single)Math.Clamp(t, 0d, 1d)));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static LunyQuaternion LerpUnclamped(LunyQuaternion a, LunyQuaternion b, Single t) => new(Quaternion.Lerp(a._value, b._value, t));
+		public static LunyQuaternion LerpUnclamped(LunyQuaternion a, LunyQuaternion b, Double t) =>
+			new(Quaternion.Lerp(a._value, b._value, (Single)t));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static LunyQuaternion Inverse(LunyQuaternion rotation) => new(Quaternion.Inverse(rotation._value));
@@ -164,15 +166,15 @@ namespace Luny.Engine.Bridge
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static LunyQuaternion Conjugate(LunyQuaternion value) => new(Quaternion.Conjugate(value._value));
 
-		public static Single Angle(LunyQuaternion a, LunyQuaternion b)
+		public static Double Angle(LunyQuaternion a, LunyQuaternion b)
 		{
-			var dot = Quaternion.Dot(a._value, b._value);
-			return MathF.Acos(Math.Clamp(MathF.Abs(dot), 0f, 1f)) * 2f * (180f / MathF.PI);
+			var dot = (Double)Quaternion.Dot(a._value, b._value);
+			return Math.Acos(Math.Clamp(Math.Abs(dot), 0d, 1d)) * 2d * (180d / Math.PI);
 		}
 
 		public static LunyQuaternion Euler(Single x, Single y, Single z)
 		{
-			var result = new LunyQuaternion(0, 0, 0, 1);
+			var result = Identity;
 			result.EulerAngles = new LunyVector3(x, y, z);
 			return result;
 		}
@@ -181,7 +183,7 @@ namespace Luny.Engine.Bridge
 
 		public static LunyQuaternion Euler(LunyVector3 euler)
 		{
-			var result = new LunyQuaternion(0, 0, 0, 1);
+			var result = Identity;
 			result.EulerAngles = euler;
 			return result;
 		}
@@ -250,13 +252,13 @@ namespace Luny.Engine.Bridge
 
 		public static LunyQuaternion LookRotation(LunyVector3 forward) => LookRotation(forward, LunyVector3.Up);
 
-		public static LunyQuaternion RotateTowards(LunyQuaternion from, LunyQuaternion to, Single maxDegreesDelta)
+		public static LunyQuaternion RotateTowards(LunyQuaternion from, LunyQuaternion to, Double maxDegreesDelta)
 		{
 			var angle = Angle(from, to);
-			if (angle < Single.Epsilon)
+			if (angle <= Double.Epsilon)
 				return to;
 
-			return Slerp(from, to, Math.Min(1f, maxDegreesDelta / angle));
+			return Slerp(from, to, Math.Min(1d, maxDegreesDelta / angle));
 		}
 
 		public static LunyVector3 operator *(LunyQuaternion rotation, LunyVector3 point)

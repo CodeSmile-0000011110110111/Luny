@@ -193,14 +193,14 @@ namespace Luny.Engine.Bridge
 			return vector;
 		}
 
-		public static LunyVector3 MoveTowards(LunyVector3 current, LunyVector3 target, Single maxDistanceDelta)
+		public static LunyVector3 MoveTowards(LunyVector3 current, LunyVector3 target, Double maxDistanceDelta)
 		{
 			var diff = target._value - current._value;
 			var dist = diff.Length();
 			if (dist <= maxDistanceDelta || dist < 1e-05f)
 				return target;
 
-			return new LunyVector3(current._value + diff / dist * maxDistanceDelta);
+			return new LunyVector3(current._value + diff / dist * (Single)maxDistanceDelta);
 		}
 
 		public static LunyVector3 Project(LunyVector3 vector, LunyVector3 onNormal)
