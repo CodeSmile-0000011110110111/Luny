@@ -12,7 +12,7 @@ namespace Luny.Engine.Bridge
 		{
 			get
 			{
-				if (!_cachedObject.TryGetTarget(out var obj) || !IsValid(obj))
+				if (!IsCachedObjectValid(out var obj))
 				{
 					obj = ResolveSceneObject(_query);
 					//LunyLogger.LogInfo($"'{_query}' resolved to {obj}", this);
@@ -40,6 +40,8 @@ namespace Luny.Engine.Bridge
 			_cachedObject = new WeakReference<T>(obj);
 		}
 
+		protected Boolean IsCachedObjectValid(out T obj) => _cachedObject.TryGetTarget(out obj) && IsValid(obj);
+
 		protected abstract T ResolveSceneObject([NotNull] String query);
 		protected abstract Boolean IsValid(T value);
 
@@ -62,6 +64,8 @@ namespace Luny.Engine.Bridge
 
 		protected override LunyObject ResolveSceneObject(String query) => (LunyObject)LunyEngine.Instance.Scene.FindObjectByName(query);
 		protected override Boolean IsValid(LunyObject value) => value != null && value.IsValid;
+
+		public Boolean TryResolveReference(out LunyObject obj) => IsCachedObjectValid(out obj);
 	}
 
 	/// <summary>
