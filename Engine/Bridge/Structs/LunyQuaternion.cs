@@ -150,7 +150,7 @@ namespace Luny.Engine.Bridge
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static LunyQuaternion SlerpUnclamped(LunyQuaternion a, LunyQuaternion b, Double t) =>
-			new(Quaternion.Slerp(a._value, b._value, (float)t));
+			new(Quaternion.Slerp(a._value, b._value, (Single)t));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static LunyQuaternion Lerp(LunyQuaternion a, LunyQuaternion b, Double t) =>

@@ -73,8 +73,6 @@ namespace Luny
 		public static readonly String Plus = "➕";
 		public static readonly String Minus = "➖";
 
-
-
 #pragma warning restore 0414
 	}
 }

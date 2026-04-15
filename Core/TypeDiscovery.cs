@@ -17,7 +17,7 @@ namespace Luny
 		public static IEnumerable<Type> FindAll<T>()
 		{
 			var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-			var containsSmokeTests = allAssemblies.FirstOrDefault((assembly => assembly.FullName.Contains("SmokeTests")));
+			var containsSmokeTests = allAssemblies.FirstOrDefault(assembly => assembly.FullName.Contains("SmokeTests"));
 			var allTypes = allAssemblies.SelectMany(GetTypesFromAssembly);
 			var validImplementations = allTypes.Where(t => typeof(T).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
 			var groupedByType = validImplementations.GroupBy(t => t.AssemblyQualifiedName);
