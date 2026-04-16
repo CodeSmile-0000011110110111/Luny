@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Luny
 {
+	[Serializable]
 	public readonly struct Variable<T> : IEquatable<Variable<T>>
 	{
 		public enum ValueType

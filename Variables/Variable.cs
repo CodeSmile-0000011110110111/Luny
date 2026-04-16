@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Luny
 {
+	[Serializable]
 	public readonly struct Variable : IEquatable<Variable>, IEquatable<Boolean>, IEquatable<Double>, IEquatable<String>
 	{
 		private static Int32 s_UniqueNameID;

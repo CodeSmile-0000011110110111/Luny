@@ -39,6 +39,7 @@ namespace Luny
 	/// <summary>
 	/// Dictionary-based variable storage.
 	/// </summary>
+	[Serializable]
 	public sealed class Table : ITable
 	{
 		/// <summary>
