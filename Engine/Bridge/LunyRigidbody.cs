@@ -11,10 +11,15 @@ namespace Luny.Engine.Bridge
 		ILunyObject Owner { get; }
 
 		/// <summary>Sets whether the rigidbody is kinematic (not affected by physics forces).</summary>
-		void SetKinematic(Boolean enabled);
+		Boolean IsKinematic { get; set; }
 
 		/// <summary>Sets whether gravity affects this rigidbody.</summary>
-		void SetGravityEnabled(Boolean enabled);
+		Boolean UseGravity { get; set; }
+
+		/// <summary>
+		/// Sets the rigidbody's interpolation mode.
+		/// </summary>
+		LunyRigidbodyInterpolation Interpolation { get; set; }
 
 		/// <summary>
 		/// Moves the rigidbody by <paramref name="delta"/> this physics step.
@@ -61,13 +66,14 @@ namespace Luny.Engine.Bridge
 		/// <inheritdoc/>
 		public ILunyObject Owner => _owner.TryGetTarget(out var owner) ? owner : null;
 
+		/// <inheritdoc/>
+		public abstract Boolean IsKinematic { get; set; }
+
+		/// <inheritdoc/>
+		public abstract Boolean UseGravity { get; set; }
+		public abstract LunyRigidbodyInterpolation Interpolation { get; set; }
+
 		protected LunyRigidbody(ILunyObject owner) => _owner = new WeakReference<ILunyObject>(owner);
-
-		/// <inheritdoc/>
-		public abstract void SetKinematic(Boolean enabled);
-
-		/// <inheritdoc/>
-		public abstract void SetGravityEnabled(Boolean enabled);
 
 		/// <inheritdoc/>
 		public abstract void MovePosition(LunyVector3 delta, LunyTransformSpace space);
