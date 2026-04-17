@@ -15,7 +15,7 @@ namespace Luny
 			Number,
 			Boolean,
 			String,
-			Reference,
+			//Reference,
 		}
 
 		private const String DefaultName = null;
