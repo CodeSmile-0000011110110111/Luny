@@ -74,10 +74,10 @@ namespace Luny
 		}
 
 		// called by LunyObjectRegistry
-		internal void ObjectRegistered(ILunyObject lunyObject) => InvokeObserversOnObjectRegistered(lunyObject);
-		internal void ObjectUnregistered(ILunyObject lunyObject) => InvokeObserversOnObjectUnregistered(lunyObject);
+		internal void ObjectRegistered(ILunyGameObject lunyGameObject) => InvokeObserversOnObjectRegistered(lunyGameObject);
+		internal void ObjectUnregistered(ILunyGameObject lunyGameObject) => InvokeObserversOnObjectUnregistered(lunyGameObject);
 
-		private void InvokeObserversOnObjectRegistered(ILunyObject lunyObject)
+		private void InvokeObserversOnObjectRegistered(ILunyGameObject lunyGameObject)
 		{
 			//LunyLogger.LogInfo($"Registered: {lunyObject}", this);
 
@@ -86,7 +86,7 @@ namespace Luny
 				_profiler.BeginObserver(observer);
 				try
 				{
-					observer.OnObjectRegistered(lunyObject);
+					observer.OnObjectRegistered(lunyGameObject);
 				}
 				catch (Exception e)
 				{
@@ -101,7 +101,7 @@ namespace Luny
 			}
 		}
 
-		private void InvokeObserversOnObjectUnregistered(ILunyObject lunyObject)
+		private void InvokeObserversOnObjectUnregistered(ILunyGameObject lunyGameObject)
 		{
 			//LunyLogger.LogInfo($"Unregistered: {lunyObject}", this);
 
@@ -110,7 +110,7 @@ namespace Luny
 				_profiler.BeginObserver(observer);
 				try
 				{
-					observer.OnObjectUnregistered(lunyObject);
+					observer.OnObjectUnregistered(lunyGameObject);
 				}
 				catch (Exception e)
 				{

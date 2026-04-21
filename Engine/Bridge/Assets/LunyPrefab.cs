@@ -12,6 +12,6 @@ namespace Luny.Engine.Bridge
 		protected LunyPrefab(Object nativePrefabAsset, LunyAssetPath assetPath)
 			: base(nativePrefabAsset, assetPath) {}
 
-		public abstract T Instantiate<T>(ILunyObject parent = null) where T : class;
+		public abstract T Instantiate<T>(ILunyGameObject parent = null) where T : class;
 	}
 }

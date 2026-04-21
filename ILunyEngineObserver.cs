@@ -69,15 +69,15 @@ namespace Luny
 		/// Called when a LunyObject registered with LunyEngine either via instantiation or handing ownership of an existing
 		/// engine object to LunyEngine. Runs before the object's OnCreated callback.
 		/// </summary>
-		/// <param name="lunyObject"></param>
-		void OnObjectRegistered(ILunyObject lunyObject) {}
+		/// <param name="lunyGameObject"></param>
+		void OnObjectRegistered(ILunyGameObject lunyGameObject) {}
 
 		/// <summary>
 		/// Called when a LunyObject has unregistered from LunyEngine either by destroying it or when transferring ownership back
 		/// to the native engine. Runs after object's OnDestroy callback. The object's `IsValid` is false but its NativeObject reference
 		/// can still be accessed.
 		/// </summary>
-		/// <param name="lunyObject"></param>
-		void OnObjectUnregistered(ILunyObject lunyObject) {}
+		/// <param name="lunyGameObject"></param>
+		void OnObjectUnregistered(ILunyGameObject lunyGameObject) {}
 	}
 }

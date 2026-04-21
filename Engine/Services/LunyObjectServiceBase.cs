@@ -8,32 +8,32 @@ namespace Luny.Engine.Services
 	/// </summary>
 	public interface ILunyObjectService : ILunyEngineService
 	{
-		ILunyObject CreateEmpty(String name, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation, LunyVector3? scale);
+		ILunyGameObject CreateEmpty(String name, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation, LunyVector3? scale);
 
-		ILunyObject CreatePrimitive(String name, LunyPrimitiveType type, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation,
+		ILunyGameObject CreatePrimitive(String name, LunyPrimitiveType type, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation,
 			LunyVector3? scale);
 
 		/// <summary>
 		/// Creates a new object from a prefab bridge.
 		/// </summary>
-		ILunyObject CreateFromPrefab(ILunyPrefab prefab, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation,
+		ILunyGameObject CreateFromPrefab(ILunyPrefab prefab, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation,
 			LunyVector3? scale);
 
-		ILunyObject Clone(ILunyObject original, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation, LunyVector3? scale);
+		ILunyGameObject Clone(ILunyGameObject original, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation, LunyVector3? scale);
 	}
 
 	public abstract class LunyObjectServiceBase : LunyEngineServiceBase, ILunyObjectService
 	{
-		public abstract ILunyObject CreateEmpty(String name, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation,
+		public abstract ILunyGameObject CreateEmpty(String name, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation,
 			LunyVector3? scale);
 
-		public abstract ILunyObject CreatePrimitive(String name, LunyPrimitiveType type, ILunyObject parent, LunyVector3? position,
+		public abstract ILunyGameObject CreatePrimitive(String name, LunyPrimitiveType type, ILunyGameObject parent, LunyVector3? position,
 			LunyQuaternion? rotation, LunyVector3? scale);
 
-		public abstract ILunyObject CreateFromPrefab(ILunyPrefab prefab, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation,
+		public abstract ILunyGameObject CreateFromPrefab(ILunyPrefab prefab, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation,
 			LunyVector3? scale);
 
-		public abstract ILunyObject Clone(ILunyObject original, ILunyObject parent, LunyVector3? position, LunyQuaternion? rotation,
+		public abstract ILunyGameObject Clone(ILunyGameObject original, ILunyGameObject parent, LunyVector3? position, LunyQuaternion? rotation,
 			LunyVector3? scale);
 	}
 }

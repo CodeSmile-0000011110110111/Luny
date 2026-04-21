@@ -20,18 +20,18 @@ namespace Luny.Engine.Services
 		/// <summary>
 		/// Gets objects with matching names in the current scene. Creates LunyObject instances.
 		/// </summary>
-		IReadOnlyList<ILunyObject> GetObjects(IReadOnlyCollection<String> objectNames);
+		IReadOnlyList<ILunyGameObject> GetObjects(IReadOnlyCollection<String> objectNames);
 
 		/// <summary>
 		/// Finds a LunyObject by name in the current scene.
 		/// </summary>
-		ILunyObject FindObjectByName(String name);
+		ILunyGameObject FindObjectByName(String name);
 
 		/// <summary>
 		/// Finds a named child object under <paramref name="parent"/> (depth-first, includes inactive).
 		/// Returns null if not found.
 		/// </summary>
-		ILunyObject FindChildByName(ILunyObject parent, String name);
+		ILunyGameObject FindChildByName(ILunyGameObject parent, String name);
 	}
 
 	internal interface ILunySceneServiceInternal
@@ -47,9 +47,9 @@ namespace Luny.Engine.Services
 		private ILunyScene _currentScene;
 		[MaybeNull] public ILunyScene CurrentScene { get => _currentScene; protected set => _currentScene = value; }
 		public abstract void ReloadScene();
-		public abstract IReadOnlyList<ILunyObject> GetObjects(IReadOnlyCollection<String> objectNames);
-		public abstract ILunyObject FindObjectByName(String name);
-		public abstract ILunyObject FindChildByName(ILunyObject parent, String name);
+		public abstract IReadOnlyList<ILunyGameObject> GetObjects(IReadOnlyCollection<String> objectNames);
+		public abstract ILunyGameObject FindObjectByName(String name);
+		public abstract ILunyGameObject FindChildByName(ILunyGameObject parent, String name);
 
 		protected void InvokeOnSceneLoaded(ILunyScene scene) => OnSceneLoaded?.Invoke(scene);
 		protected void InvokeOnSceneUnloaded(ILunyScene scene) => OnSceneUnloaded?.Invoke(scene);

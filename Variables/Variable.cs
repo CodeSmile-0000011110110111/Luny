@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Luny
 {
 	[Serializable]
-	public readonly struct Variable : IEquatable<Variable>, IEquatable<Boolean>, IEquatable<Double>, IEquatable<String>
+	public readonly struct Variable : IEquatable<Variable>, IEquatable<Boolean>, IEquatable<Double>, IEquatable<String>, IEquatable<Object>
 	{
 		private static Int32 s_UniqueNameID;
 
@@ -15,7 +15,7 @@ namespace Luny
 			Number,
 			Boolean,
 			String,
-			//Reference,
+			Object,
 		}
 
 		private const String DefaultName = null;
@@ -28,14 +28,18 @@ namespace Luny
 #endif
 
 		private readonly Double _numValue;
-		private readonly Object _string;
+		private readonly Object _refValue;
 		private readonly ValueType _type;
 
 		public ValueType Type => _type;
+		private Boolean IsBoolean => _type == ValueType.Boolean;
+		private Boolean IsNumber => _type == ValueType.Number;
+		private Boolean IsString => _type == ValueType.String;
+		private Boolean IsObject => _type == ValueType.Object;
 
-		public Boolean IsTrue => (_type == ValueType.Boolean || _type == ValueType.Number) && Math.Abs(_numValue) > Double.Epsilon;
-		public Boolean IsHigh => _type == ValueType.Number && Math.Abs(_numValue) >= 0.5;
-		public Boolean IsNormalized => _type == ValueType.Number && Math.Abs(_numValue) <= 1.0;
+		public Boolean IsTrue => (IsBoolean || IsNumber) && Math.Abs(_numValue) > Double.Epsilon;
+		public Boolean IsHigh => IsNumber && Math.Abs(_numValue) >= 0.5;
+		public Boolean IsNormalized => IsNumber && Math.Abs(_numValue) <= 1.0;
 
 		public Double Value => _type switch
 		{
@@ -43,22 +47,19 @@ namespace Luny
 			ValueType.Boolean => _numValue,
 			var _ => throw new InvalidOperationException($"Attempt to get number value from {_type}: {this}"),
 		};
-		public Object Object => _type switch
-		{
-			ValueType.String => _string,
-			var _ => _numValue,
-		};
-		public Boolean IsNull => _type == ValueType.String && _string == null;
-		public Boolean IsNullOrEmpty => _type == ValueType.String && String.IsNullOrEmpty((String)_string);
-		public Boolean IsNullOrWhitespace => _type == ValueType.String && String.IsNullOrWhiteSpace((String)_string);
+		public Object Object => _refValue;
+
+		public Boolean IsNull => (IsString || IsObject) && _refValue == null;
+		public Boolean IsNullOrEmpty => IsString && String.IsNullOrEmpty((String)_refValue);
+		public Boolean IsNullOrWhitespace => IsString && String.IsNullOrWhiteSpace((String)_refValue);
 
 		private Variable(Double value, ValueType type, String name = null)
 		{
 			_numValue = value;
-			_string = null;
+			_refValue = null;
 			_type = type;
 #if DEBUG || LUNY_DEBUG
-			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _string, _numValue) : name;
+			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _refValue, _numValue) : name;
 			if (Double.IsNaN(_numValue))
 				LunyLogger.LogWarning($"Variable {name}: value is 'NaN' (not a number)");
 			if (Double.IsInfinity(_numValue))
@@ -69,10 +70,10 @@ namespace Luny
 		private Variable(Object value, ValueType type, String name = null)
 		{
 			_numValue = 0;
-			_string = value;
+			_refValue = value;
 			_type = type;
 #if DEBUG || LUNY_DEBUG
-			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _string, _numValue) : name;
+			_name = String.IsNullOrWhiteSpace(name) ? GenerateUniqueName(type, _refValue, _numValue) : name;
 #endif
 		}
 
@@ -84,8 +85,14 @@ namespace Luny
 		public static Variable Named(Boolean value, String name) => new(value ? 1.0 : 0.0, ValueType.Boolean, name);
 		public static Variable Named(Double value, String name) => new(value, ValueType.Number, name);
 		public static Variable Named(Single value, String name) => new(value, ValueType.Number, name);
-		public static Variable Named(Int32 value, String name) => new(value, ValueType.Number, name);
 		public static Variable Named(Int64 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(Int32 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(Int16 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(SByte value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(UInt64 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(UInt32 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(UInt16 value, String name) => new(value, ValueType.Number, name);
+		public static Variable Named(Byte value, String name) => new(value, ValueType.Number, name);
 		public static Variable Named(Number value, String name) => new(value, ValueType.Number, name);
 		public static Variable Named(String value, String name) => new(value, ValueType.String, name);
 
@@ -94,28 +101,33 @@ namespace Luny
 			Boolean b => Named(b, name),
 			Double d => Named(d, name),
 			Single f => Named(f, name),
-			Int32 i => Named(i, name),
 			Int64 l => Named(l, name),
+			Int32 i => Named(i, name),
+			Int16 i => Named(i, name),
+			SByte b => Named(b, name),
+			UInt64 ul => Named(ul, name),
+			UInt32 ui => Named(ui, name),
+			UInt16 ui => Named(ui, name),
+			Byte b => Named(b, name),
 			Number n => Named(n, name),
 			String s => Named(s, name),
 			Variable v => new Variable(v._numValue, v._type, name),
-			var _ => value == null
-				? new Variable(0d, ValueType.Number, name)
-				: throw new NotSupportedException($"Unsupported Type: {value.GetType().Name}"),
+			_ => new Variable(value, ValueType.Object, name),
 		};
 
 		public Boolean AsBoolean() => IsTrue;
-		public Number AsNumber() => _type == ValueType.Number ? _numValue : 0.0;
-		public Single AsSingle() => _type == ValueType.Number ? (Single)_numValue : 0f;
-		public Double AsDouble() => _type == ValueType.Number ? _numValue : 0.0;
-		public Int32 AsInt32() => _type == ValueType.Number ? (Int32)_numValue : 0;
-		public Int64 AsInt64() => _type == ValueType.Number ? (Int64)_numValue : 0L;
+		public Number AsNumber() => IsNumber ? _numValue : 0.0;
+		public Single AsSingle() => IsNumber ? (Single)_numValue : 0f;
+		public Double AsDouble() => IsNumber ? _numValue : 0.0;
+		public Int32 AsInt32() => IsNumber ? (Int32)_numValue : 0;
+		public Int64 AsInt64() => IsNumber ? (Int64)_numValue : 0L;
 
 		public String AsString() => _type switch
 		{
 			ValueType.Number => Convert.ToString(_numValue, CultureInfo.InvariantCulture),
 			ValueType.Boolean => Convert.ToString(AsBoolean()),
-			ValueType.String => _string as String ?? String.Empty,
+			ValueType.String => _refValue as String ?? String.Empty,
+			ValueType.Object => _refValue != null ? _refValue.ToString() : "<null>",
 			var _ => throw new ArgumentOutOfRangeException(_type.ToString()),
 		};
 
@@ -188,10 +200,14 @@ namespace Luny
 				case ValueType.String:
 					if (t == typeof(String) || t == typeof(Object))
 					{
-						result = (T)_string;
+						result = (T)_refValue;
 						return true;
 					}
 					break;
+
+				case ValueType.Object:
+					result = (T)_refValue;
+					return true;
 			}
 
 			result = default;
@@ -205,6 +221,7 @@ namespace Luny
 		public static implicit operator Variable(Boolean v) => new(v ? 1.0 : 0.0, ValueType.Boolean);
 		public static implicit operator Variable(Number v) => new(v, ValueType.Number);
 		public static implicit operator Variable(String v) => new(v, ValueType.String);
+		public static Variable FromObject(Object v) => new(v, ValueType.Object);
 
 		public static implicit operator Int32(Variable v) => v.AsInt32();
 		public static implicit operator Int64(Variable v) => v.AsInt64();
@@ -219,14 +236,15 @@ namespace Luny
 		{
 			ValueType.Number => _numValue.ToString("#,##0.###"),
 			ValueType.Boolean => Emoji.IsTrue(IsTrue),
-			ValueType.String => $"\"{_string}\"",
-			var _ => $"<{_type}>",
+			ValueType.String => $"\"{_refValue}\"",
+			ValueType.Object => _refValue != null ? _refValue.ToString() : "<null>",
+			var _ => throw new ArgumentOutOfRangeException(nameof(_type), $"unhandled variable type: {_type}"),
 		};
 
-		public Boolean Equals(Boolean b) => _type == ValueType.Boolean && AsBoolean() == b;
-		public Boolean Equals(Double d) => _type == ValueType.Number && _numValue.Equals(d);
-		public Boolean Equals(String s) => _type == ValueType.String && String.Equals((String)_string, s);
-		public Boolean Equals(Variable other) => _numValue.Equals(other._numValue) && Equals(_string, other._string);
+		public Boolean Equals(Boolean b) => IsBoolean && AsBoolean() == b;
+		public Boolean Equals(Double d) => IsNumber && _numValue.Equals(d);
+		public Boolean Equals(String s) => IsString && String.Equals((String)_refValue, s);
+		public Boolean Equals(Variable other) => _numValue.Equals(other._numValue) && Equals(_refValue, other._refValue);
 
 		public override Boolean Equals(Object obj) => obj switch
 		{
@@ -234,16 +252,20 @@ namespace Luny
 			Boolean b => Equals(b),
 			Double d => Equals(d),
 			Single f => Equals((Double)f),
-			Int32 i => Equals((Double)i),
 			Int64 l => Equals((Double)l),
-			UInt32 ui => Equals((Double)ui),
+			Int32 i => Equals((Double)i),
+			Int16 i => Equals((Double)i),
+			SByte b => Equals((Double)b),
 			UInt64 ul => Equals((Double)ul),
+			UInt32 ui => Equals((Double)ui),
+			UInt16 ui => Equals((Double)ui),
+			Byte ub => Equals((Double)ub),
 			Number n => Equals((Double)n),
 			String s => Equals(s),
-			var _ => false,
+			var o => Equals(_refValue, o),
 		};
 
-		public override Int32 GetHashCode() => HashCode.Combine(_numValue, _string, (Int32)_type);
+		public override Int32 GetHashCode() => HashCode.Combine(_numValue, _refValue, (Int32)_type);
 
 		public static Boolean operator ==(Variable left, Variable right) => left.Equals(right);
 		public static Boolean operator !=(Variable left, Variable right) => !left.Equals(right);

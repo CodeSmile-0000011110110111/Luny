@@ -8,9 +8,9 @@ using SystemObject = System.Object;
 namespace Luny.Engine.Bridge
 {
 	/// <summary>
-	/// See implementation: <see cref="Luny.Engine.Bridge.LunyObject"/>
+	/// See implementation: <see cref="LunyGameObject"/>
 	/// </summary>
-	public interface ILunyObject
+	public interface ILunyGameObject
 	{
 		/// <summary>
 		/// Runs when the object was created or ownership was transferred to LunyEngine. Runs even if the object starts disabled.
@@ -164,21 +164,21 @@ namespace Luny.Engine.Bridge
 		/// Creates a new instance of the current object.
 		/// </summary>
 		/// <returns></returns>
-		ILunyObject Clone();
+		ILunyGameObject Clone();
 
 		/// <summary>
 		/// Creates a new instance of the current object and parents it.
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		ILunyObject Clone(LunyTransform parent);
+		ILunyGameObject Clone(LunyTransform parent);
 	}
 
 	/// <summary>
 	/// Engine-agnostic wrapper for engine objects.
 	/// Safeguards against NullReferenceExceptions when the engine-native object may have been destroyed.
 	/// </summary>
-	public abstract class LunyObject : ILunyObject
+	public abstract class LunyGameObject : ILunyGameObject
 	{
 		public event Action OnCreated;
 		public event Action OnDestroyed;
@@ -221,7 +221,7 @@ namespace Luny.Engine.Bridge
 		/// TODO: refactor to GetNativeComponent&lt;T&gt;() once LunyComponent base class exists.
 		/// </remarks>
 		public LunyRigidbody Rigidbody => IsValid ? GetNativeRigidbody() : null;
-		ILunyRigidbody ILunyObject.Rigidbody => Rigidbody;
+		ILunyRigidbody ILunyGameObject.Rigidbody => Rigidbody;
 
 #if DEBUG || LUNY_DEBUG
 		private String DebugNativeObjectName { get; set; }
@@ -269,15 +269,15 @@ namespace Luny.Engine.Bridge
 			}
 		}
 
-		private LunyObject() {} // Hidden ctor
+		private LunyGameObject() {} // Hidden ctor
 
 		/// <summary>
 		/// Instantiates a LunyObject instance.
 		/// </summary>
-		protected LunyObject(SystemObject nativeObject, Int64 nativeObjectId, Boolean isNativeObjectEnabled, Boolean isNativeObjectVisible)
+		protected LunyGameObject(SystemObject nativeObject, Int64 nativeObjectId, Boolean isNativeObjectEnabled, Boolean isNativeObjectVisible)
 		{
 			if (nativeObject == null)
-				throw new LunyBridgeException($"{this}: {nameof(LunyObject)} created with a <null> reference");
+				throw new LunyBridgeException($"{this}: {nameof(LunyGameObject)} created with a <null> reference");
 
 			_state.IsEnabled = isNativeObjectEnabled;
 			_state.IsVisible = isNativeObjectVisible;
@@ -287,7 +287,7 @@ namespace Luny.Engine.Bridge
 			Objects.Register(this);
 		}
 
-		protected static Boolean TryGetCached(Int64 nativeId, out ILunyObject lunyObject) => Objects.TryGetByNativeId(nativeId, out lunyObject);
+		protected static Boolean TryGetCached(Int64 nativeId, out ILunyGameObject lunyGameObject) => Objects.TryGetByNativeId(nativeId, out lunyGameObject);
 
 		public T As<T>() where T : class => _nativeObject as T;
 		public T Cast<T>() where T : class => (T)_nativeObject;
@@ -335,9 +335,9 @@ namespace Luny.Engine.Bridge
 			Objects.Unregister(this);
 		}
 
-		public abstract ILunyObject Clone();
+		public abstract ILunyGameObject Clone();
 
-		public abstract ILunyObject Clone(LunyTransform parent);
+		public abstract ILunyGameObject Clone(LunyTransform parent);
 
 		private void ClearObjectEvents()
 		{
@@ -379,7 +379,7 @@ namespace Luny.Engine.Bridge
 			//LunyLogger.LogInfo($"Destroyed: {this} ({GetHashCode()})", this);
 		}
 
-		~LunyObject() => LunyTraceLogger.LogInfoFinalized(this);
+		~LunyGameObject() => LunyTraceLogger.LogInfoFinalized(this);
 
 		private void SetVisibleState(Boolean visible)
 		{

@@ -7,8 +7,8 @@ namespace Luny.Engine.Bridge
 	/// </summary>
 	public interface ILunyRigidbody
 	{
-		/// <summary>The owning <see cref="ILunyObject"/>. May return null if the owner has been destroyed.</summary>
-		ILunyObject Owner { get; }
+		/// <summary>The owning <see cref="ILunyGameObject"/>. May return null if the owner has been destroyed.</summary>
+		ILunyGameObject Owner { get; }
 
 		/// <summary>Sets whether the rigidbody is kinematic (not affected by physics forces).</summary>
 		Boolean IsKinematic { get; set; }
@@ -61,10 +61,10 @@ namespace Luny.Engine.Bridge
 	/// </remarks>
 	public abstract class LunyRigidbody : ILunyRigidbody
 	{
-		private readonly WeakReference<ILunyObject> _owner;
+		private readonly WeakReference<ILunyGameObject> _owner;
 
 		/// <inheritdoc/>
-		public ILunyObject Owner => _owner.TryGetTarget(out var owner) ? owner : null;
+		public ILunyGameObject Owner => _owner.TryGetTarget(out var owner) ? owner : null;
 
 		/// <inheritdoc/>
 		public abstract Boolean IsKinematic { get; set; }
@@ -73,7 +73,7 @@ namespace Luny.Engine.Bridge
 		public abstract Boolean UseGravity { get; set; }
 		public abstract LunyRigidbodyInterpolation Interpolation { get; set; }
 
-		protected LunyRigidbody(ILunyObject owner) => _owner = new WeakReference<ILunyObject>(owner);
+		protected LunyRigidbody(ILunyGameObject owner) => _owner = new WeakReference<ILunyGameObject>(owner);
 
 		/// <inheritdoc/>
 		public abstract void MovePosition(LunyVector3 delta, LunyTransformSpace space);

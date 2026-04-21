@@ -6,10 +6,10 @@ namespace Luny.Engine.Bridge
 {
 	internal interface ILunyObjectLifecycleInternal
 	{
-		void OnObjectCreated(ILunyObject lunyObject);
-		void ScheduleNativeObjectDestruction(ILunyObject lunyObject);
-		void OnObjectEnabled(ILunyObject lunyObject);
-		void OnObjectDisabled(ILunyObject lunyObject);
+		void OnObjectCreated(ILunyGameObject lunyGameObject);
+		void ScheduleNativeObjectDestruction(ILunyGameObject lunyGameObject);
+		void OnObjectEnabled(ILunyGameObject lunyGameObject);
+		void OnObjectDisabled(ILunyGameObject lunyGameObject);
 	}
 
 	/// <summary>
@@ -18,37 +18,37 @@ namespace Luny.Engine.Bridge
 	/// </summary>
 	internal sealed class LunyObjectLifecycle : ILunyObjectLifecycleInternal
 	{
-		private Queue<ILunyObject> _pendingReady = new();
-		private Queue<ILunyObject> _pendingDestroy = new();
-		private Dictionary<LunyObjectId, ILunyObject> _pendingReadyWaitingForEnable = new();
+		private Queue<ILunyGameObject> _pendingReady = new();
+		private Queue<ILunyGameObject> _pendingDestroy = new();
+		private Dictionary<LunyObjectId, ILunyGameObject> _pendingReadyWaitingForEnable = new();
 
 		/// <summary>
 		/// Queues an object for its OnReady event.
 		/// </summary>
-		public void OnObjectCreated(ILunyObject lunyObject)
+		public void OnObjectCreated(ILunyGameObject lunyGameObject)
 		{
-			if (lunyObject.IsEnabledInHierarchy)
-				_pendingReady.Enqueue(lunyObject);
+			if (lunyGameObject.IsEnabledInHierarchy)
+				_pendingReady.Enqueue(lunyGameObject);
 			else
-				_pendingReadyWaitingForEnable[lunyObject.LunyObjectId] = lunyObject;
+				_pendingReadyWaitingForEnable[lunyGameObject.LunyObjectId] = lunyGameObject;
 		}
 
 		/// <summary>
 		/// Queues an object for deferred destruction.
 		/// </summary>
-		public void ScheduleNativeObjectDestruction(ILunyObject lunyObject) => _pendingDestroy.Enqueue(lunyObject);
+		public void ScheduleNativeObjectDestruction(ILunyGameObject lunyGameObject) => _pendingDestroy.Enqueue(lunyGameObject);
 
 		/// <summary>
 		/// Notifies the manager that an object's enabled state has changed.
 		/// Used to move objects from the waiting queue to the ready queue.
 		/// </summary>
-		public void OnObjectEnabled(ILunyObject lunyObject)
+		public void OnObjectEnabled(ILunyGameObject lunyGameObject)
 		{
-			if (_pendingReadyWaitingForEnable.Remove(lunyObject.LunyObjectId, out var obj))
+			if (_pendingReadyWaitingForEnable.Remove(lunyGameObject.LunyObjectId, out var obj))
 				_pendingReady.Enqueue(obj);
 		}
 
-		public void OnObjectDisabled(ILunyObject lunyObject) {}
+		public void OnObjectDisabled(ILunyGameObject lunyGameObject) {}
 
 		~LunyObjectLifecycle() => LunyTraceLogger.LogInfoFinalized(this);
 
@@ -60,7 +60,7 @@ namespace Luny.Engine.Bridge
 			while (_pendingReady.Count > 0)
 			{
 				var obj = _pendingReady.Dequeue();
-				if (obj is LunyObject lunyObjectImpl && lunyObjectImpl.IsValid)
+				if (obj is LunyGameObject lunyObjectImpl && lunyObjectImpl.IsValid)
 					lunyObjectImpl.InvokeOnReady();
 			}
 		}
@@ -73,7 +73,7 @@ namespace Luny.Engine.Bridge
 			while (_pendingDestroy.Count > 0)
 			{
 				var obj = _pendingDestroy.Dequeue();
-				if (obj is LunyObject lunyObjectImpl)
+				if (obj is LunyGameObject lunyObjectImpl)
 					lunyObjectImpl.DestroyNativeObjectInternal();
 			}
 		}

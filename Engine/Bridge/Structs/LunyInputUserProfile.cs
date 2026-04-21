@@ -9,7 +9,7 @@ namespace Luny.Engine.Bridge
 		public String UserName { get; set; }
 		public Object Actions { get; set; }
 		public Object UiInput { get; set; }
-		public List<ILunyObject> Pawns { get; } = new();
+		public List<ILunyGameObject> Pawns { get; } = new();
 
 		public override String ToString() => $"{nameof(LunyInputUserProfile)}({UserId}:{UserName}, {Actions})";
 	}

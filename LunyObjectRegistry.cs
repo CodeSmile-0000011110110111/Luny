@@ -8,17 +8,17 @@ namespace Luny
 	public interface ILunyObjectRegistry
 	{
 		Int32 Count { get; }
-		IEnumerable<ILunyObject> AllObjects { get; }
-		Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyObject lunyObject);
-		Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyObject lunyObject);
-		ILunyObject GetCached(String objectName);
-		ILunyObject Find(String objectName);
+		IEnumerable<ILunyGameObject> AllObjects { get; }
+		Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyGameObject lunyGameObject);
+		Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyGameObject lunyGameObject);
+		ILunyGameObject GetCached(String objectName);
+		ILunyGameObject Find(String objectName);
 	}
 
 	internal interface ILunyObjectRegistryInternal : ILunyObjectRegistry
 	{
-		void Register(ILunyObject lunyObject);
-		Boolean Unregister(ILunyObject lunyObject);
+		void Register(ILunyGameObject lunyGameObject);
+		Boolean Unregister(ILunyGameObject lunyGameObject);
 	}
 
 	/// <summary>
@@ -27,8 +27,8 @@ namespace Luny
 	/// </summary>
 	internal sealed class LunyObjectRegistry : ILunyObjectRegistryInternal
 	{
-		private Dictionary<LunyObjectId, ILunyObject> _objectsByLunyID = new();
-		private Dictionary<LunyNativeObjectId, ILunyObject> _objectsByNativeID = new();
+		private Dictionary<LunyObjectId, ILunyGameObject> _objectsByLunyID = new();
+		private Dictionary<LunyNativeObjectId, ILunyGameObject> _objectsByNativeID = new();
 
 		/// <summary>
 		/// Gets the total number of registered objects.
@@ -38,53 +38,53 @@ namespace Luny
 		/// <summary>
 		/// Gets all registered objects.
 		/// </summary>
-		public IEnumerable<ILunyObject> AllObjects => _objectsByLunyID.Values;
+		public IEnumerable<ILunyGameObject> AllObjects => _objectsByLunyID.Values;
 
 		/// <summary>
 		/// Registers a new object. Throws if already registered.
 		/// </summary>
-		public void Register(ILunyObject lunyObject)
+		public void Register(ILunyGameObject lunyGameObject)
 		{
-			if (lunyObject == null)
-				throw new ArgumentNullException(nameof(lunyObject));
+			if (lunyGameObject == null)
+				throw new ArgumentNullException(nameof(lunyGameObject));
 
-			var lunyID = lunyObject.LunyObjectId;
-			var nativeID = lunyObject.NativeObjectId;
+			var lunyID = lunyGameObject.LunyObjectId;
+			var nativeID = lunyGameObject.NativeObjectId;
 
 #if DEBUG
 			if (_objectsByLunyID.ContainsKey(lunyID))
 				throw new InvalidOperationException($"Object with LunyID {lunyID} already registered.");
 #endif
 
-			_objectsByLunyID[lunyID] = lunyObject;
-			_objectsByNativeID[nativeID] = lunyObject;
+			_objectsByLunyID[lunyID] = lunyGameObject;
+			_objectsByNativeID[nativeID] = lunyGameObject;
 
-			((LunyEngine)LunyEngine.Instance).ObjectRegistered(lunyObject);
+			((LunyEngine)LunyEngine.Instance).ObjectRegistered(lunyGameObject);
 		}
 
 		/// <summary>
 		/// Unregisters an object.
 		/// </summary>
-		public Boolean Unregister(ILunyObject lunyObject)
+		public Boolean Unregister(ILunyGameObject lunyGameObject)
 		{
-			if (lunyObject == null)
+			if (lunyGameObject == null)
 				return false;
 
-			var removed = TryRemove(lunyObject.LunyObjectId);
+			var removed = TryRemove(lunyGameObject.LunyObjectId);
 			if (removed)
-				((LunyEngine)LunyEngine.Instance).ObjectUnregistered(lunyObject);
+				((LunyEngine)LunyEngine.Instance).ObjectUnregistered(lunyGameObject);
 
 #if DEBUG
 			if (!removed)
-				LunyLogger.LogWarning($"Tried to unregister non-existent LunyID {lunyObject.LunyObjectId}");
+				LunyLogger.LogWarning($"Tried to unregister non-existent LunyID {lunyGameObject.LunyObjectId}");
 #endif
 
 			return removed;
 		}
 
-		public ILunyObject GetCached(String objectName) => _objectsByLunyID.Values.FirstOrDefault(obj => obj.Name == objectName);
+		public ILunyGameObject GetCached(String objectName) => _objectsByLunyID.Values.FirstOrDefault(obj => obj.Name == objectName);
 
-		public ILunyObject Find(String objectName)
+		public ILunyGameObject Find(String objectName)
 		{
 			var existing = GetCached(objectName);
 			if (existing != null)
@@ -110,14 +110,14 @@ namespace Luny
 		/// <summary>
 		/// Finds an object by its NativeID.
 		/// </summary>
-		public Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyObject lunyObject) =>
-			_objectsByNativeID.TryGetValue(lunyNativeObjectID, out lunyObject);
+		public Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyGameObject lunyGameObject) =>
+			_objectsByNativeID.TryGetValue(lunyNativeObjectID, out lunyGameObject);
 
 		/// <summary>
 		/// Finds an object by its LunyID.
 		/// </summary>
-		public Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyObject lunyObject) =>
-			_objectsByLunyID.TryGetValue(lunyObjectID, out lunyObject);
+		public Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyGameObject lunyGameObject) =>
+			_objectsByLunyID.TryGetValue(lunyObjectID, out lunyGameObject);
 
 		/// <summary>
 		/// Unregisters an object by its LunyID.

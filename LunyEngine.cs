@@ -59,7 +59,7 @@ namespace Luny
 		/// <summary>
 		/// Will try to find an object by name in the scene. Queries already-cached objects first. Wraps found objects in a `LunyObject` instance.
 		/// </summary>
-		ILunyObject TryGetObject(String name, [CallerFilePath] String callerFilePath = "", [CallerLineNumber] Int32 callerLineNumber = 0);
+		ILunyGameObject TryGetObject(String name, [CallerFilePath] String callerFilePath = "", [CallerLineNumber] Int32 callerLineNumber = 0);
 
 		// Observer management
 		void EnableObserver<T>() where T : ILunyEngineObserver;
@@ -206,7 +206,7 @@ namespace Luny
 		public Boolean IsObserverEnabled<T>() where T : ILunyEngineObserver => _observerRegistry.IsObserverEnabled<T>();
 		public T GetObserver<T>() where T : ILunyEngineObserver => _observerRegistry.GetObserver<T>();
 
-		public ILunyObject TryGetObject(String name, [CallerFilePath] String callerFilePath = "", [CallerLineNumber] Int32 callerLineNumber = 0)
+		public ILunyGameObject TryGetObject(String name, [CallerFilePath] String callerFilePath = "", [CallerLineNumber] Int32 callerLineNumber = 0)
 		{
 			var obj = _objectRegistry.GetCached(name) ?? _objectRegistry.Find(name);
 			if (obj == null)
