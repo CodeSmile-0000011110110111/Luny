@@ -17,20 +17,21 @@ namespace Luny
 		ScriptableObject = 2,
 		Component = 3,
 
-		// Value types (non-Object)
-		Color = 100,
-		AnimationCurve = 101,
-
-		Vector2 = 110,
-		Vector3 = 111,
-
 		// Specific component types
-		Transform = 500,
-		Rigidbody = 501,
+		Transform = 1000,
+		Rigidbody = 1001,
 
-		// Assets
-		Material = 1000,
-		Mesh = 1001,
-		AudioClip = 1002,
+		// Asset Types
+		Material = 3000,
+		Mesh = 3001,
+		AudioClip = 3002,
+
+		// Value types (non-Object)
+		Color = 8000,
+		AnimationCurve = 8001,
+
+		Vector2 = 8010,
+		Vector3 = 8011,
+
 	}
 }
