@@ -5,7 +5,7 @@ namespace Luny.Engine.Bridge
 	/// <summary>
 	/// See implementation: <see cref="LunyRigidbody"/>
 	/// </summary>
-	public interface ILunyRigidbody
+	public interface ILunyRigidbody : ILunyComponent
 	{
 		/// <summary>The owning <see cref="ILunyGameObject"/>. May return null if the owner has been destroyed.</summary>
 		ILunyGameObject Owner { get; }
@@ -59,7 +59,7 @@ namespace Luny.Engine.Bridge
 	/// TODO: refactor component caching (Transform, Rigidbody) to a GetNativeComponent&lt;T&gt;()
 	/// pattern once a LunyComponent base class exists and more than two component types are supported.
 	/// </remarks>
-	public abstract class LunyRigidbody : ILunyRigidbody
+	public abstract class LunyRigidbody : LunyComponent, ILunyRigidbody
 	{
 		private readonly WeakReference<ILunyGameObject> _owner;
 

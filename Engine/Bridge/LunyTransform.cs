@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace Luny.Engine.Bridge
 {
+	public interface ILunyTransform : ILunyComponent {}
+
 	/// <summary>
 	/// Engine-agnostic proxy for native transform types (UnityEngine.Transform, Godot.Node3D, etc.).
 	/// </summary>
-	public abstract class LunyTransform
+	public abstract class LunyTransform : LunyComponent, ILunyTransform
 	{
 		public abstract Object NativeTransform { get; }
 

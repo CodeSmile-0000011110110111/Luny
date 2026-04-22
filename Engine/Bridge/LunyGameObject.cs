@@ -10,7 +10,7 @@ namespace Luny.Engine.Bridge
 	/// <summary>
 	/// See implementation: <see cref="LunyGameObject"/>
 	/// </summary>
-	public interface ILunyGameObject
+	public interface ILunyGameObject : ILunyObject
 	{
 		/// <summary>
 		/// Runs when the object was created or ownership was transferred to LunyEngine. Runs even if the object starts disabled.
@@ -178,7 +178,7 @@ namespace Luny.Engine.Bridge
 	/// Engine-agnostic wrapper for engine objects.
 	/// Safeguards against NullReferenceExceptions when the engine-native object may have been destroyed.
 	/// </summary>
-	public abstract class LunyGameObject : ILunyGameObject
+	public abstract class LunyGameObject : LunyObject, ILunyGameObject
 	{
 		public event Action OnCreated;
 		public event Action OnDestroyed;
