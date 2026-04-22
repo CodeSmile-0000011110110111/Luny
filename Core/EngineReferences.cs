@@ -6,49 +6,66 @@ namespace Luny
 {
 	public interface IEngineReferences
 	{
-		LunyGameObject this[String name] { get; }
+		Object this[String name] { get; }
 		LunyGameObject GetGameObject(String name);
-		LunyComponent GetComponent(String name);
+
+		LunyTransform GetTransform(String name);
+
+		//LunyComponent GetComponent(String name);
 		T Get<T>(String name);
 	}
 
 	public sealed class EngineReferences : IEngineReferences
 	{
 		private readonly Dictionary<String, EngineReference> _references = new();
-		private readonly Func<Object, LunyGameObject> _gameObjectFactory;
-		private readonly Func<Object, LunyComponent> _componentFactory;
+		private readonly Dictionary<Type, Func<Object, Object>> _factories = new();
 
-		public LunyGameObject this[String name] => GetGameObject(name);
+		public Object this[String name] => Get<Object>(name);
 
-		public EngineReferences(Func<Object, LunyGameObject> gameObjectFactory, Func<Object, LunyComponent> componentFactory)
+		public EngineReferences(IEnumerable<KeyValuePair<Type, Func<Object, Object>>> factories)
 		{
-			_gameObjectFactory = gameObjectFactory ?? throw new ArgumentNullException(nameof(gameObjectFactory));
-			_componentFactory = componentFactory ?? throw new ArgumentNullException(nameof(componentFactory));
+			foreach (var pair in factories)
+				_factories[pair.Key] = pair.Value;
 		}
 
 		public LunyGameObject GetGameObject(String name)
 		{
-			if (!_references.TryGetValue(name, out var r))
+			if (!TryGetReference(name, out var r))
 				return null;
 
-			return _gameObjectFactory(r.Value);
+			if (TryGetFactory<LunyGameObject>(out var factory))
+				return factory(r.Value) as LunyGameObject;
+
+			return default;
 		}
 
-		public LunyComponent GetComponent(String name)
+		public LunyTransform GetTransform(String name)
+		{
+			if (!TryGetReference(name, out var r))
+				return null;
+
+			if (TryGetFactory<LunyTransform>(out var factory))
+				return factory(r.Value) as LunyTransform;
+
+			return default;
+		}
+
+		/*public LunyComponent GetComponent(String name)
 		{
 			if (!_references.TryGetValue(name, out var r))
 				return null;
 
-			return _componentFactory(r.Value);
-		}
+			if (_factories.TryGetValue(typeof(LunyComponent), out var factory))
+				return (LunyComponent)factory(r.Value);
 
-		public T Get<T>(String name)
-		{
-			if (!_references.TryGetValue(name, out var r) || r.Value is not T value)
-				return default;
+			return default;
+		}*/
 
-			return value;
-		}
+		public T Get<T>(String name) => TryGetReference(name, out var r) && r.Value is T value ? value : default;
+
+		private Boolean TryGetFactory<T>(out Func<Object, Object> factory) => _factories.TryGetValue(typeof(T), out factory);
+
+		private Boolean TryGetReference(String name, out EngineReference r) => _references.TryGetValue(name, out r);
 
 		internal void Add(String key, Object value, EngineReferenceType type) => _references[key] = new EngineReference
 		{
@@ -56,5 +73,37 @@ namespace Luny
 			Value = value,
 			Type = type,
 		};
+	}
+
+	public record EngineReference
+	{
+		public String Name;
+		public Object Value;
+		public EngineReferenceType Type;
+	}
+
+	public enum EngineReferenceType
+	{
+		// Base object types
+		Object = 0,
+		GameObject = 1,
+		Component = 3,
+
+		// Specific component types
+		Transform = 5000,
+		Rigidbody = 5001,
+
+		// Asset Types
+		ScriptableObject = 10000,
+		AudioClip = 10001,
+		Material = 10002,
+		Mesh = 10003,
+
+		// Value types (non-Object)
+		Color = 20000,
+		AnimationCurve = 20001,
+
+		Vector2 = 20010,
+		Vector3 = 20011,
 	}
 }
