@@ -4,35 +4,51 @@ using System.Collections.Generic;
 
 namespace Luny
 {
-	public interface IEngineReferences {}
+	public interface IEngineReferences
+	{
+		ILunyGameObject GameObject(String name);
+		ILunyComponent Component(String name);
+		T Get<T>(String name) where T : struct;
+	}
 
 	public sealed class EngineReferences : IEngineReferences
 	{
-		private Dictionary<String, EngineReference> _references = new();
+		private readonly Dictionary<String, EngineReference> _references = new();
+		private readonly Func<Object, ILunyGameObject> _gameObjectFactory;
+		private readonly Func<Object, ILunyComponent> _componentFactory;
 
-		internal void Add(String key, Object engineRef, Int64 nativeId, Boolean isSceneReference) => _references.Add(key, new EngineReference
+		public EngineReferences(Func<Object, ILunyGameObject> gameObjectFactory, Func<Object, ILunyComponent> componentFactory)
+		{
+			_gameObjectFactory = gameObjectFactory ?? throw new ArgumentNullException(nameof(gameObjectFactory));
+			_componentFactory = componentFactory ?? throw new ArgumentNullException(nameof(componentFactory));
+		}
+
+		internal void Add(String key, Object value, EngineReferenceType type) => _references[key] = new EngineReference
 		{
 			Name = key,
-			Value = engineRef,
-			NativeId = nativeId,
-			IsSceneReference = isSceneReference,
-		});
+			Value = value,
+			Type = type,
+		};
 
-		public Boolean TryGet(String name, out ILunyGameObject obj)
+		public ILunyGameObject GameObject(String name)
 		{
-			obj = null;
-			if (!_references.TryGetValue(name, out var value))
-				return false;
+			if (!_references.TryGetValue(name, out var r))
+				return null;
+			return _gameObjectFactory(r.Value);
+		}
 
-			// TODO: LunyObject should provide a static conversion method, but C# 9 doesn't support static overrides
-			// LunyObject has TryGetCached with object registry lookup, this should be utilized
-			//
-			// could register the object with Luny registry here
-			// though this should be avoided in case the object is never actually used
-			// but that is only a minor concern/optimization
+		public ILunyComponent Component(String name)
+		{
+			if (!_references.TryGetValue(name, out var r))
+				return null;
+			return _componentFactory(r.Value);
+		}
 
-			//obj = UnityGameObject.ToLunyObject(value);
-			return true;
+		public T Get<T>(String name) where T : struct
+		{
+			if (!_references.TryGetValue(name, out var r) || r.Value is not T value)
+				return default;
+			return value;
 		}
 	}
 }
