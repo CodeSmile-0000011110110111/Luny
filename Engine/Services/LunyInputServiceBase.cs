@@ -58,7 +58,7 @@ namespace Luny.Engine.Services
 		/// <param name="schemeNames"></param>
 		void SetControlSchemes(params String[] schemeNames);
 
-		void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyGameObject lunyGameObject);
+		void AssignUserToLastDevice(String userName, Int32 deviceId, LunyGameObject lunyGameObject);
 		void UnassignUser(String userName);
 		Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
 		void EnableInputAction(String actionName);
@@ -96,7 +96,7 @@ namespace Luny.Engine.Services
 		public Boolean GetButtonJustPressed(String actionName) => _buttonJustPressed.TryGetValue(actionName, out var v) && v;
 
 		public abstract void SetControlSchemes(params String[] schemeNames);
-		public abstract void AssignUserToLastDevice(String userName, Int32 deviceId, ILunyGameObject lunyGameObject);
+		public abstract void AssignUserToLastDevice(String userName, Int32 deviceId, LunyGameObject lunyGameObject);
 		public abstract void UnassignUser(String userName);
 		public abstract Boolean IsUserPairedWithDevice(String userName, Int32 deviceId);
 		public abstract void EnableInputAction(String actionName);

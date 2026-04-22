@@ -236,7 +236,7 @@ namespace Luny
 		{
 			ValueType.Number => _numValue.ToString("#,##0.###"),
 			ValueType.Boolean => Emoji.IsTrue(IsTrue),
-			ValueType.String => $"\"{_refValue}\"",
+			ValueType.String => _refValue as String,
 			ValueType.Object => _refValue != null ? _refValue.ToString() : "<null>",
 			var _ => throw new ArgumentOutOfRangeException(nameof(_type), $"unhandled variable type: {_type}"),
 		};

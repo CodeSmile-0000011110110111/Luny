@@ -50,51 +50,51 @@ namespace Luny.Engine.Bridge
 			: $"{GetType().Name}(\"{_query}\")";
 	}
 
-	public sealed class LunyObjectRef : LunyRef<LunyGameObject>
+	public sealed class LunyGameObjectRef : LunyRef<LunyGameObject>
 	{
-		public static implicit operator LunyObjectRef(String name) => new(name);
-		public static implicit operator LunyObjectRef(LunyGameObject obj) => new(obj);
-		public static implicit operator LunyGameObject(LunyObjectRef objectRef) => objectRef.Value;
+		public static implicit operator LunyGameObjectRef(String name) => new(name);
+		public static implicit operator LunyGameObjectRef(LunyGameObject obj) => new(obj);
+		public static implicit operator LunyGameObject(LunyGameObjectRef gameObjectRef) => gameObjectRef.Value;
 
-		public LunyObjectRef(String name)
+		public LunyGameObjectRef(String name)
 			: base(name) {}
 
-		public LunyObjectRef(ILunyGameObject obj)
-			: base((LunyGameObject)obj) {}
+		public LunyGameObjectRef(LunyGameObject obj)
+			: base(obj) {}
 
-		protected override LunyGameObject ResolveSceneObject(String query) => (LunyGameObject)LunyEngine.Instance.Scene.FindObjectByName(query);
+		protected override LunyGameObject ResolveSceneObject(String query) => LunyEngine.Instance.Scene.FindObjectByName(query);
 		protected override Boolean IsValid(LunyGameObject value) => value != null && value.IsValid;
 
 		public Boolean TryResolveReference(out LunyGameObject obj) => IsCachedObjectValid(out obj);
 	}
 
 	/// <summary>
-	/// Resolves a named child object under a specific parent <see cref="ILunyGameObject"/> at runtime.
+	/// Resolves a named child object under a specific parent <see cref="LunyGameObject"/> at runtime.
 	/// Caches the resolved child as a weak reference to avoid preventing GC.
 	/// Blocks should attempt resolution in their ctor and re-resolve in Execute if the cached ref is no longer valid.
 	/// </summary>
 	public sealed class LunyChildRef
 	{
-		private readonly WeakReference<ILunyGameObject> _parent;
+		private readonly WeakReference<LunyGameObject> _parent;
 		private readonly String _childName;
-		private WeakReference<ILunyGameObject> _cachedChild;
+		private WeakReference<LunyGameObject> _cachedChild;
 
-		public LunyChildRef(ILunyGameObject parent, String childName)
+		public LunyChildRef(LunyGameObject parent, String childName)
 		{
 			if (parent == null)
 				throw new ArgumentNullException(nameof(parent));
 			if (String.IsNullOrEmpty(childName))
 				throw new ArgumentException("Child name cannot be null or empty.", nameof(childName));
 
-			_parent = new WeakReference<ILunyGameObject>(parent);
+			_parent = new WeakReference<LunyGameObject>(parent);
 			_childName = childName;
-			_cachedChild = new WeakReference<ILunyGameObject>(null);
+			_cachedChild = new WeakReference<LunyGameObject>(null);
 		}
 
 		/// <summary>
 		/// Resolves the child object by name under the parent. Returns null if not found or parent is destroyed.
 		/// </summary>
-		public ILunyGameObject Resolve()
+		public LunyGameObject Resolve()
 		{
 			if (_cachedChild.TryGetTarget(out var cached) && cached != null && cached.IsValid)
 				return cached;
@@ -102,7 +102,7 @@ namespace Luny.Engine.Bridge
 				return null;
 
 			var child = LunyEngine.Instance.Scene.FindChildByName(parent, _childName);
-			_cachedChild = new WeakReference<ILunyGameObject>(child);
+			_cachedChild = new WeakReference<LunyGameObject>(child);
 			return child;
 		}
 	}

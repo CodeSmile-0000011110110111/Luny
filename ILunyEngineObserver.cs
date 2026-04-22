@@ -70,7 +70,7 @@ namespace Luny
 		/// engine object to LunyEngine. Runs before the object's OnCreated callback.
 		/// </summary>
 		/// <param name="lunyGameObject"></param>
-		void OnObjectRegistered(ILunyGameObject lunyGameObject) {}
+		void OnObjectRegistered(LunyGameObject lunyGameObject) {}
 
 		/// <summary>
 		/// Called when a LunyObject has unregistered from LunyEngine either by destroying it or when transferring ownership back
@@ -78,6 +78,6 @@ namespace Luny
 		/// can still be accessed.
 		/// </summary>
 		/// <param name="lunyGameObject"></param>
-		void OnObjectUnregistered(ILunyGameObject lunyGameObject) {}
+		void OnObjectUnregistered(LunyGameObject lunyGameObject) {}
 	}
 }

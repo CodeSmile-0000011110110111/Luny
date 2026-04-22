@@ -50,8 +50,8 @@ namespace Luny.Engine.Bridge
 
 		public abstract void LookAt(LunyVector3 worldPosition);
 		public abstract void LookAt(LunyVector3 worldPosition, LunyVector3 worldUp);
-		public abstract void LookAt(ILunyGameObject target);
-		public abstract void LookAt(ILunyGameObject target, LunyVector3 worldUp);
+		public abstract void LookAt(LunyGameObject target);
+		public abstract void LookAt(LunyGameObject target, LunyVector3 worldUp);
 		public abstract void Rotate(LunyVector3 eulerAngles, LunyTransformSpace space = LunyTransformSpace.Local);
 		public abstract void Rotate(LunyVector3 axis, Double angle, LunyTransformSpace space = LunyTransformSpace.Local);
 		public abstract void RotateAround(LunyVector3 worldPoint, LunyVector3 axis, Double angle);

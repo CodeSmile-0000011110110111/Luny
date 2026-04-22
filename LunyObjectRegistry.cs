@@ -8,17 +8,17 @@ namespace Luny
 	public interface ILunyObjectRegistry
 	{
 		Int32 Count { get; }
-		IEnumerable<ILunyGameObject> AllObjects { get; }
-		Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyGameObject lunyGameObject);
-		Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyGameObject lunyGameObject);
-		ILunyGameObject GetCached(String objectName);
-		ILunyGameObject Find(String objectName);
+		IEnumerable<LunyGameObject> AllObjects { get; }
+		Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out LunyGameObject lunyGameObject);
+		Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out LunyGameObject lunyGameObject);
+		LunyGameObject GetCached(String objectName);
+		LunyGameObject Find(String objectName);
 	}
 
 	internal interface ILunyObjectRegistryInternal : ILunyObjectRegistry
 	{
-		void Register(ILunyGameObject lunyGameObject);
-		Boolean Unregister(ILunyGameObject lunyGameObject);
+		void Register(LunyGameObject lunyGameObject);
+		Boolean Unregister(LunyGameObject lunyGameObject);
 	}
 
 	/// <summary>
@@ -27,8 +27,8 @@ namespace Luny
 	/// </summary>
 	internal sealed class LunyObjectRegistry : ILunyObjectRegistryInternal
 	{
-		private Dictionary<LunyObjectId, ILunyGameObject> _objectsByLunyID = new();
-		private Dictionary<LunyNativeObjectId, ILunyGameObject> _objectsByNativeID = new();
+		private Dictionary<LunyObjectId, LunyGameObject> _objectsByLunyID = new();
+		private Dictionary<LunyNativeObjectId, LunyGameObject> _objectsByNativeID = new();
 
 		/// <summary>
 		/// Gets the total number of registered objects.
@@ -38,12 +38,12 @@ namespace Luny
 		/// <summary>
 		/// Gets all registered objects.
 		/// </summary>
-		public IEnumerable<ILunyGameObject> AllObjects => _objectsByLunyID.Values;
+		public IEnumerable<LunyGameObject> AllObjects => _objectsByLunyID.Values;
 
 		/// <summary>
 		/// Registers a new object. Throws if already registered.
 		/// </summary>
-		public void Register(ILunyGameObject lunyGameObject)
+		public void Register(LunyGameObject lunyGameObject)
 		{
 			if (lunyGameObject == null)
 				throw new ArgumentNullException(nameof(lunyGameObject));
@@ -65,7 +65,7 @@ namespace Luny
 		/// <summary>
 		/// Unregisters an object.
 		/// </summary>
-		public Boolean Unregister(ILunyGameObject lunyGameObject)
+		public Boolean Unregister(LunyGameObject lunyGameObject)
 		{
 			if (lunyGameObject == null)
 				return false;
@@ -82,9 +82,9 @@ namespace Luny
 			return removed;
 		}
 
-		public ILunyGameObject GetCached(String objectName) => _objectsByLunyID.Values.FirstOrDefault(obj => obj.Name == objectName);
+		public LunyGameObject GetCached(String objectName) => _objectsByLunyID.Values.FirstOrDefault(obj => obj.Name == objectName);
 
-		public ILunyGameObject Find(String objectName)
+		public LunyGameObject Find(String objectName)
 		{
 			var existing = GetCached(objectName);
 			if (existing != null)
@@ -110,13 +110,13 @@ namespace Luny
 		/// <summary>
 		/// Finds an object by its NativeID.
 		/// </summary>
-		public Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out ILunyGameObject lunyGameObject) =>
+		public Boolean TryGetByNativeId(LunyNativeObjectId lunyNativeObjectID, out LunyGameObject lunyGameObject) =>
 			_objectsByNativeID.TryGetValue(lunyNativeObjectID, out lunyGameObject);
 
 		/// <summary>
 		/// Finds an object by its LunyID.
 		/// </summary>
-		public Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out ILunyGameObject lunyGameObject) =>
+		public Boolean TryGetByLunyID(LunyObjectId lunyObjectID, out LunyGameObject lunyGameObject) =>
 			_objectsByLunyID.TryGetValue(lunyObjectID, out lunyGameObject);
 
 		/// <summary>

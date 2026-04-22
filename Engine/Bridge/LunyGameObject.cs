@@ -164,14 +164,14 @@ namespace Luny.Engine.Bridge
 		/// Creates a new instance of the current object.
 		/// </summary>
 		/// <returns></returns>
-		ILunyGameObject Clone();
+		LunyGameObject Clone();
 
 		/// <summary>
 		/// Creates a new instance of the current object and parents it.
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		ILunyGameObject Clone(LunyTransform parent);
+		LunyGameObject Clone(LunyTransform parent);
 	}
 
 	/// <summary>
@@ -287,7 +287,7 @@ namespace Luny.Engine.Bridge
 			Objects.Register(this);
 		}
 
-		protected static Boolean TryGetCached(Int64 nativeId, out ILunyGameObject lunyGameObject) => Objects.TryGetByNativeId(nativeId, out lunyGameObject);
+		protected static Boolean TryGetCached(Int64 nativeId, out LunyGameObject lunyGameObject) => Objects.TryGetByNativeId(nativeId, out lunyGameObject);
 
 		public T As<T>() where T : class => _nativeObject as T;
 		public T Cast<T>() where T : class => (T)_nativeObject;
@@ -335,9 +335,9 @@ namespace Luny.Engine.Bridge
 			Objects.Unregister(this);
 		}
 
-		public abstract ILunyGameObject Clone();
+		public abstract LunyGameObject Clone();
 
-		public abstract ILunyGameObject Clone(LunyTransform parent);
+		public abstract LunyGameObject Clone(LunyTransform parent);
 
 		private void ClearObjectEvents()
 		{

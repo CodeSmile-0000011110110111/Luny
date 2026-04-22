@@ -6,21 +6,48 @@ namespace Luny
 {
 	public interface IEngineReferences
 	{
-		ILunyGameObject GameObject(String name);
-		ILunyComponent Component(String name);
-		T Get<T>(String name) where T : struct;
+		LunyGameObject this[String name] { get; }
+		LunyGameObject GetGameObject(String name);
+		LunyComponent GetComponent(String name);
+		T Get<T>(String name);
 	}
 
 	public sealed class EngineReferences : IEngineReferences
 	{
 		private readonly Dictionary<String, EngineReference> _references = new();
-		private readonly Func<Object, ILunyGameObject> _gameObjectFactory;
-		private readonly Func<Object, ILunyComponent> _componentFactory;
+		private readonly Func<Object, LunyGameObject> _gameObjectFactory;
+		private readonly Func<Object, LunyComponent> _componentFactory;
 
-		public EngineReferences(Func<Object, ILunyGameObject> gameObjectFactory, Func<Object, ILunyComponent> componentFactory)
+		public LunyGameObject this[String name] => GetGameObject(name);
+
+		public EngineReferences(Func<Object, LunyGameObject> gameObjectFactory, Func<Object, LunyComponent> componentFactory)
 		{
 			_gameObjectFactory = gameObjectFactory ?? throw new ArgumentNullException(nameof(gameObjectFactory));
 			_componentFactory = componentFactory ?? throw new ArgumentNullException(nameof(componentFactory));
+		}
+
+		public LunyGameObject GetGameObject(String name)
+		{
+			if (!_references.TryGetValue(name, out var r))
+				return null;
+
+			return _gameObjectFactory(r.Value);
+		}
+
+		public LunyComponent GetComponent(String name)
+		{
+			if (!_references.TryGetValue(name, out var r))
+				return null;
+
+			return _componentFactory(r.Value);
+		}
+
+		public T Get<T>(String name)
+		{
+			if (!_references.TryGetValue(name, out var r) || r.Value is not T value)
+				return default;
+
+			return value;
 		}
 
 		internal void Add(String key, Object value, EngineReferenceType type) => _references[key] = new EngineReference
@@ -29,26 +56,5 @@ namespace Luny
 			Value = value,
 			Type = type,
 		};
-
-		public ILunyGameObject GameObject(String name)
-		{
-			if (!_references.TryGetValue(name, out var r))
-				return null;
-			return _gameObjectFactory(r.Value);
-		}
-
-		public ILunyComponent Component(String name)
-		{
-			if (!_references.TryGetValue(name, out var r))
-				return null;
-			return _componentFactory(r.Value);
-		}
-
-		public T Get<T>(String name) where T : struct
-		{
-			if (!_references.TryGetValue(name, out var r) || r.Value is not T value)
-				return default;
-			return value;
-		}
 	}
 }
