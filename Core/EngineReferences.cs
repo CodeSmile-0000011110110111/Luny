@@ -24,8 +24,11 @@ namespace Luny
 
 		public EngineReferences(IEnumerable<KeyValuePair<Type, Func<Object, Object>>> factories)
 		{
-			foreach (var pair in factories)
-				_factories[pair.Key] = pair.Value;
+			if (factories != null)
+			{
+				foreach (var pair in factories)
+					_factories[pair.Key] = pair.Value;
+			}
 		}
 
 		public LunyGameObject GetGameObject(String name)
@@ -62,9 +65,7 @@ namespace Luny
 		}*/
 
 		public T Get<T>(String name) => TryGetReference(name, out var r) && r.Value is T value ? value : default;
-
 		private Boolean TryGetFactory<T>(out Func<Object, Object> factory) => _factories.TryGetValue(typeof(T), out factory);
-
 		private Boolean TryGetReference(String name, out EngineReference r) => _references.TryGetValue(name, out r);
 
 		internal void Add(String key, Object value, EngineReferenceType type) => _references[key] = new EngineReference
@@ -87,23 +88,22 @@ namespace Luny
 		// Base object types
 		Object = 0,
 		GameObject = 1,
-		Component = 3,
 
 		// Specific component types
-		Transform = 5000,
-		Rigidbody = 5001,
+		// Component = 5000,
+		// Transform = 5001,
+		// Rigidbody = 5002,
 
 		// Asset Types
 		ScriptableObject = 10000,
-		AudioClip = 10001,
-		Material = 10002,
-		Mesh = 10003,
+		Material = 10001,
+		// AudioClip = 10002,
+		// Mesh = 10003,
 
 		// Value types (non-Object)
 		Color = 20000,
 		AnimationCurve = 20001,
-
-		Vector2 = 20010,
-		Vector3 = 20011,
+		Vector2 = 20100,
+		Vector3 = 20101,
 	}
 }
