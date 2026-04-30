@@ -118,9 +118,8 @@ namespace Luny
 			if (_table.TryGetValue(key, out var existing))
 				return (VarHandle)existing;
 
-			var handle = new VarHandle(this, key);
+			var handle = CreateVarHandle(key);
 			handle.SetVariable(0.0);
-			_table[key] = handle;
 			return handle;
 		}
 
@@ -134,6 +133,13 @@ namespace Luny
 
 			var handle = new VarHandle<T>(this, key);
 			_table[key] = handle;
+			return handle;
+		}
+		private VarHandle CreateVarHandle(String key, Boolean constant = false)
+		{
+			var handle = new VarHandle(this, key, constant);
+			_table[key] = handle;
+			NotifyVariableChanged(handle);
 			return handle;
 		}
 
@@ -153,6 +159,7 @@ namespace Luny
 		/// <param name="variable">The constant value.</param>
 		/// <returns>The handle to the constant.</returns>
 		public VarHandle DefineConstant(String key, Variable variable) => Define(key, variable, true);
+
 
 		private VarHandle Define(String key, Variable variable, Boolean constant)
 		{
@@ -175,9 +182,8 @@ namespace Luny
 				throw new InvalidOperationException($"Attempt to redefine variable: [{existing.Name}] ({existing}) with ({variable})");
 			}
 
-			var handle = new VarHandle(this, key, constant);
+			var handle = CreateVarHandle(key, constant);
 			handle.SetVariable(variable);
-			_table[key] = handle;
 			return handle;
 		}
 
